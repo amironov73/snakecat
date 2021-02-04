@@ -1,0 +1,13 @@
+###############################################################################
+# for GitHub linguist
+###############################################################################
+*.h   linguist-language=C
+*.svg linguist-vendored=true
+*.mst linguist-vendored=true
+*.fst linguist-vendored=true
+/3rdparty/*  linguist-vendored=true
+/assets/*    linguist-vendored=true
+/data/*      linguist-vendored=true
+/original/*  linguist-vendored=true
+/reference/* linguist-vendored=true
+/utils/*     linguist-vendored=true
