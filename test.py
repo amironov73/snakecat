@@ -5,44 +5,43 @@
 """
 
 import sys
-from ctypes import c_char_p, create_string_buffer, byref, cast
-from irbis import IC_set_blocksocket, IC_reg, IC_read, IC_unreg
-
-answerSize: int = 32000
-buffer = create_string_buffer(answerSize)
-answer = cast(buffer, c_char_p)
+from irbis import connect, disconnect, read_record, get_max_mfn, \
+    hide_window, IRBIS_CATALOG
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно
-rc = IC_set_blocksocket(1)
-print('IC_blocksocket=', rc)
+hide_window()
 
-HOST = b'127.0.0.1'
-PORT = b'6666'
-ARM = b'C'
-USER = b'librarian'
-PASSWORD = b'secret'
-DB = b'IBIS'
+# данные для подключения к серверу
+HOST = '127.0.0.1'
+PORT = '6666'
+ARM = IRBIS_CATALOG
+USER = 'librarian'
+PASSWORD = 'secret'
+DB = 'IBIS'
 
 # Подключение к серверу
-rc = IC_reg(HOST, PORT, ARM, USER, PASSWORD, byref(answer), answerSize)
-print('IC_reg=', rc)
+rc, ini = connect(HOST, PORT, ARM, USER, PASSWORD)
+print('connect=', rc)
 if rc < 0:
     print('EXIT')
-    sys.exit()
+    sys.exit(1)
 else:
-    print('IC_reg=', answer.value)
-
+    print('connect=', ini)
 
 # Чтение записи
-rc = IC_read(DB, 1, 0, byref(answer), answerSize)
+rc, record = read_record(DB, 1)
 print('IC_read=', rc)
 if rc >= 0:
-    print('IC_read=', answer.value)
+    print('IC_read=', record)
+
+# Получение максимального MFN
+rc = get_max_mfn(DB)
+print('IC_maxmfn=', rc)
 
 # Отключение от сервера
 print()
-rc = IC_unreg(USER)
+rc = disconnect(USER)
 print('IC_unreg=', rc)
 
 print()

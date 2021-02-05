@@ -9,8 +9,12 @@ import os.path
 from ctypes import windll, c_char, c_char_p, c_int, POINTER
 
 if sys.maxsize != 0x7fffffff:
-    print('Only 32-bit systems are allowed')
-    sys.exit()
+    print('Only 32-bit systems are supported', file=sys.stderr)
+    sys.exit(1)
+
+if os.name != 'Windows' and os.name != 'nt':
+    print('Only Windows systems are supported', file=sys.stderr)
+    sys.exit(1)
 
 _me = os.path.abspath(os.path.dirname(__file__))
 dll = windll.LoadLibrary(os.path.join(_me, 'irbis64_client.dll'))

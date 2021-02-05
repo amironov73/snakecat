@@ -10,42 +10,43 @@ Supports:
 Example:
 
 ```python
-from irbis import *
-
-answerSize: int = 32000
-buffer = create_string_buffer(answerSize)
-answer = cast(buffer, c_char_p)
+import sys
+from irbis import connect, disconnect, read_record, get_max_mfn, \
+    hide_window, IRBIS_CATALOG
 
 # Set blocking socket mode,
-# get rid of obsessive window
-rc = IC_set_blocksocket(1)
-print('IC_blocksocket=', rc)
+# get rid of obsessive windowhide_window()
 
-host = b'127.0.0.1'
-port = b'6666'
-arm = b'C'
-user = b'librarian'
-password = b'secret'
-db = b'IBIS'
+# Data for the connection
+HOST = '127.0.0.1'
+PORT = '6666'
+ARM = IRBIS_CATALOG
+USER = 'librarian'
+PASSWORD = 'secret'
+DB = 'IBIS'
 
 # Connect to the server
-rc = IC_reg(host, port, arm, user, password, byref(answer), answerSize)
-print('IC_reg=', rc)
+rc, ini = connect(HOST, PORT, ARM, USER, PASSWORD)
+print('connect=', rc)
 if rc < 0:
     print('EXIT')
-    exit()
+    sys.exit(1)
 else:
-    print('IC_reg=', answer.value)
+    print('connect=', ini)
 
 # Read one record from the server
-rc = IC_read(db, 1, 0, byref(answer), answerSize)
+rc, record = read_record(DB, 1)
 print('IC_read=', rc)
 if rc >= 0:
-    print('IC_read=', answer.value)
+    print('IC_read=', record)
+
+# Get the maximal MFN
+rc = get_max_mfn(DB)
+print('IC_maxmfn=', rc)
 
 # Disconnect from the server
 print()
-rc = IC_unreg(user)
+rc = disconnect(USER)
 print('IC_unreg=', rc)
 
 print()
