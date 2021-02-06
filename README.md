@@ -55,4 +55,4 @@ print('That''s All, Folks!')
 
 ### Build status
 
-[![Build status](https://img.shields.io/appveyor/ci/AlexeyMironov/irbis64-client.svg)](https://ci.appveyor.com/project/AlexeyMironov/irbis64-client/)
+[![Build status](https://img.shields.io/appveyor/ci/AlexeyMironov/python-wrapper.svg)](https://ci.appveyor.com/project/AlexeyMironov/python-wrapper/)
