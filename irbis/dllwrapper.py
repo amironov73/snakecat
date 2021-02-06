@@ -73,7 +73,7 @@ IC_isbusy.restype = c_int
 IC_isbusy.argtypes = []
 
 ######################################################################
-# Функции работы с ресурсами
+# Функции для работы с ресурсами
 ######################################################################
 
 # Обновление INI-файла – профиля пользователя на сервере
@@ -114,7 +114,7 @@ IC_putresourse.restype = c_int
 IC_putresourse.argtypes = [c_int, c_char_p, c_char_p, c_char_p]
 
 ######################################################################
-# Функции работы с ресурсами
+# Функции для работы с мастер-файлом базы данных
 ######################################################################
 
 # Чтение записи
@@ -167,3 +167,109 @@ IC_maxmfn.argtypes = [c_char_p]
 # IC_updategroup_sinhronize.restype = c_int
 # IC_updategroup_sinhronize.argtypes = [c_int, c_int, c_char_p,
 #                                      POINTER(c_char_p), c_int]
+
+######################################################################
+# Функции для работы с записью
+######################################################################
+
+# Определить порядковый номер поля в записи
+
+IC_fieldn = dll.IC_fieldn
+IC_fieldn.restype = c_int
+IC_fieldn.argtypes = [c_char_p, c_int, c_int]
+
+# Прочитать заданное поле/подполе
+
+IC_field = dll.IC_field
+IC_field.restype = c_int
+IC_field.argtypes = [c_char_p, c_int, c_char, c_char_p, c_int]
+
+# Добавить поле в запись
+
+IC_fldadd = dll.IC_fldadd
+IC_fldadd.restype = c_int
+IC_fldadd.argtypes = [c_char_p, c_int, c_int, c_char_p, c_int]
+
+# Заменить поле
+
+IC_fldrep = dll.IC_fldrep
+IC_fldrep.restype = c_int
+IC_fldrep.argtypes = [c_char_p, c_int, c_char_p, c_int]
+
+# Определить количеств полей в записи
+
+IC_nfields = dll.IC_nfields
+IC_nfields.restype = c_int
+IC_nfields.argtypes = [c_char_p]
+
+# Определить количество повторений поля с заданной меткой
+
+IC_nocc = dll.IC_nocc
+IC_nocc.restype = c_int
+IC_nocc.argtypes = [c_char_p, c_int]
+
+# Определить метку поля с заданным порядковым номером
+
+IC_fldtag = dll.IC_fldtag
+IC_fldtag.restype = c_int
+IC_fldtag.argtypes = [c_char_p, c_int]
+
+# Опустошить запись
+
+IC_fldempty = dll.IC_fldempty
+IC_fldempty.restype = c_int
+IC_fldempty.argtypes = [c_char_p]
+
+# Поменять MFN записи
+
+IC_changemfn = dll.IC_changemfn
+IC_changemfn.restype = c_int
+IC_changemfn.argtypes = [c_char_p, c_int]
+
+# Установить признак логически удаленной записи
+
+IC_recdel = dll.IC_recdel
+IC_recdel.restype = c_int
+IC_recdel.argtypes = [c_char_p]
+
+# Снять признак логически удаленной записи
+
+IC_recundel = dll.IC_recundel
+IC_recundel.restype = c_int
+IC_recundel.argtypes = [c_char_p]
+
+# Снять признак заблокированности
+
+IC_recunlock = dll.IC_recunlock
+IC_recunlock.restype = c_int
+IC_recunlock.argtypes = [c_char_p]
+
+# Прочитать MFN записи
+
+IC_getmfn = dll.IC_getmfn
+IC_getmfn.restype = c_int
+IC_getmfn.argtypes = [c_char_p]
+
+# Создать пустую запись
+
+IC_recdummy = dll.IC_recdummy
+IC_recdummy.restype = c_int
+IC_recdummy.argtypes = [c_char_p, c_int]
+
+# Прочитать в статусе записи признак актуализированности
+
+IC_isactualized = dll.IC_isActualized
+IC_isactualized.restype = c_int
+IC_isactualized.argtypes = [c_char_p]
+
+# прочитать в статусе записи признак блокировки
+
+IC_islocked = dll.IC_isLocked
+IC_islocked.restype = c_int
+IC_islocked.argtypes = [c_char_p]
+
+# прочитать в статусе записи признак логического удаления
+
+IC_isdeleted = dll.IC_isDeleted
+IC_isdeleted.restype = c_int
+IC_isdeleted.argtypes = [c_char_p]

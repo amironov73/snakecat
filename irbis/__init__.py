@@ -24,10 +24,15 @@ from irbis.dllwrapper import IC_reg, IC_unreg, \
     IC_set_webcgi, IC_set_blocksocket, IC_isbusy, IC_update_ini, \
     IC_getresourse, IC_clearresourse, IC_getresoursegroup, \
     IC_getbinaryresourse, IC_putresourse, IC_read, IC_readformat, \
-    IC_update, IC_updategroup, IC_runlock, IC_ifupdate, IC_maxmfn
+    IC_update, IC_updategroup, IC_runlock, IC_ifupdate, IC_maxmfn, \
+    IC_fieldn, IC_field, IC_fldadd, IC_fldrep, IC_nfields, IC_nocc, \
+    IC_fldtag, IC_fldempty, IC_changemfn, IC_recdel, IC_recundel, \
+    IC_recunlock, IC_getmfn, IC_recdummy, IC_isactualized, IC_islocked, \
+    IC_isdeleted
 
 from irbis.comfort import connect, disconnect, read_record, \
-    get_max_mfn, hide_window
+    get_max_mfn, hide_window, error_to_string, ansi_to_string, \
+    utf_to_string
 
 __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'ERR_BUFSIZE', 'TERM_NOT_EXISTS', 'TERM_LAST_IN_LIST',
@@ -52,5 +57,11 @@ __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'IC_getbinaryresourse', 'IC_putresourse', 'IC_read',
            'IC_readformat', 'IC_update', 'IC_updategroup',
            'IC_runlock', 'IC_ifupdate', 'IC_maxmfn',
+           'IC_fieldn', 'IC_field', 'IC_fldadd', 'IC_fldrep',
+           'IC_nfields', 'IC_nocc', 'IC_fldtag', 'IC_fldempty',
+           'IC_changemfn', 'IC_recdel', 'IC_recundel', 'IC_recunlock',
+           'IC_getmfn', 'IC_recdummy', 'IC_isactualized', 'IC_islocked',
+           'IC_isdeleted',
            'connect', 'disconnect', 'read_record', 'get_max_mfn',
-           'hide_window']
+           'hide_window', 'error_to_string', 'ansi_to_string',
+           'utf_to_string']

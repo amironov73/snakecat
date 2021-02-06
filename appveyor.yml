@@ -14,7 +14,7 @@ install:
   - pip install --upgrade setuptools wheel coverage mypy flake8 twine pylint pygount
 
 before_build:
-  - pygount irbis -f summary
+  - pygount irbis -f summary -s py
 
 build_script:
   - cd c:\projects\python_wrapper
