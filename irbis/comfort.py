@@ -8,9 +8,9 @@ from ctypes import create_string_buffer, c_char_p, cast, byref
 from typing import TYPE_CHECKING
 from irbis.constants import ANSI, UTF, ERR_BUFSIZE
 from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
-    IC_set_blocksocket
+    IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field
 if TYPE_CHECKING:
-    from typing import Optional, Tuple
+    from typing import Optional, Tuple, List, Any
 
 
 def error_to_string(ret_code: int) -> str:
@@ -138,14 +138,106 @@ def get_max_mfn(database: str) -> int:
 
 def read_record(database: str, mfn: int) -> 'Tuple[int, c_char_p]':
     """
-    Чтение записи с сервера
+    Чтение записи с сервера.
     :param database: имя базы данных
     :param mfn: MFN записи
-    :return: пару "код возврата-запись"
+    :return: пара "код возврата-запись"
     """
-    answer_size = 32000
-    buffer = create_string_buffer(answer_size)
-    answer = cast(buffer, c_char_p)
-    ret_code = IC_read(database.encode(ANSI), mfn, 0, byref(answer),
-                       answer_size)
-    return ret_code, answer
+    answer_size = 32768
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_read(database.encode(ANSI), mfn, 0, byref(answer),
+                           answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            return ret_code, answer
+
+
+def search(database: str, expression: str) -> 'Tuple[int, List[int]]':
+    """
+    Прямой поиск по словарю
+    :param database: имя базы данных
+    :param expression: поисковое выражение
+    :return: пара "код возврата-найденные MFN"
+    """
+    answer_size = 32768
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_search(database.encode(ANSI),
+                             expression.encode(UTF), 32768, 1,
+                             b'', answer, answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            lines = utf_to_string(answer.value).split('#\r\n')
+            result = [int(line) for line in lines if line]
+            return ret_code, result
+
+
+def search_format(database: str, expression: str, format_spec: str) \
+        -> 'Tuple[int, List[str]]':
+    """
+    Прямой поиск по словарю с расформатированием
+    :param database: имя базы данных
+    :param expression: поисковое выражение
+    :param format_spec: специфификация формата
+    :return: пара "код возврата-расформатированные записи"
+    """
+    answer_size = 32768
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_search(database.encode(ANSI),
+                             expression.encode(UTF), 32768, 1,
+                             format_spec.encode(UTF),
+                             answer, answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            lines = utf_to_string(answer.value).split('\r\n')
+            return ret_code, lines
+
+
+def format_record(database: str, mfn: int, format_spec: str) \
+        -> 'Tuple[int, str]':
+    """
+    Расформатирование записи по ее MFN.
+    :param database: имя базы данных
+    :param mfn: MFN записи
+    :param format_spec: спецификация формата
+    :return: пара "код возврата-расформатированная запись"
+    """
+    answer_size = 32768
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_sformat(database.encode(ANSI),
+                              mfn, format_spec.encode(UTF),
+                              answer, answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            lines = utf_to_string(answer.value).split('\r\n')
+            return ret_code, lines[1]
+
+
+def fm(record: 'Any', tag: int, subfield: str = '') -> str:
+    """
+    Извлечение значения поля или подполя с указанной меткой.
+    :param record: запись
+    :param tag: метка поля
+    :param subfield: разделитель подполя (опционально)
+    :return: значение поля или подполя
+    """
+    index = IC_fieldn(record.value, tag, 1)
+    if index < 0:
+        return ''
+    answer_size = 32768
+    while True:
+        answer = create_string_buffer(answer_size)
+        IC_field(record.value, index, subfield.encode(ANSI),
+                 answer, answer_size)
+        return utf_to_string(answer.value)

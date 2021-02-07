@@ -8,7 +8,8 @@ import sys
 from ctypes import create_string_buffer
 from irbis import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG, error_to_string, utf_to_string, \
-    IC_nfields, IC_fieldn, IC_field
+    IC_nfields, IC_fieldn, IC_field, search, search_format, \
+    format_record
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно
@@ -58,6 +59,24 @@ if rc >= 0:
 # Получение максимального MFN
 rc = get_max_mfn(DB)
 print('IC_maxmfn=', rc)
+
+# Поиск записей
+print()
+rc, mfns = search(DB, '"K=БЕТОН$"')
+print('search=', rc)
+if rc >= 0:
+    print('search=', mfns[:10])
+rc, lines = search_format(DB, '"K=БЕТОН"', 'v200^a')
+print('search_format=', rc)
+if rc >= 0:
+    print('search_format=', lines[:10])
+
+# Форматирование записи
+print()
+rc, line = format_record(DB, 1, '@brief')
+print('format_record=', rc)
+if rc >= 0:
+    print('format_record=', line)
 
 # Отключение от сервера
 print()

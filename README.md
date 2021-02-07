@@ -5,7 +5,7 @@ Python wrapper for irbis64_client.dll
 Supports:
 
 * Windows environment only
-* CPython 32-bit interpreter version 3.8
+* CPython 32-bit interpreter version 3.6+
 
 Example:
 
@@ -15,7 +15,8 @@ from irbis import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG
 
 # Set blocking socket mode,
-# get rid of obsessive windowhide_window()
+# get rid of obsessive window
+hide_window()
 
 # Data for the connection
 HOST = '127.0.0.1'

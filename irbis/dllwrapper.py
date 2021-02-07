@@ -273,3 +273,96 @@ IC_islocked.argtypes = [c_char_p]
 IC_isdeleted = dll.IC_isDeleted
 IC_isdeleted.restype = c_int
 IC_isdeleted.argtypes = [c_char_p]
+
+######################################################################
+# Функции для работы со словарем базы данных
+######################################################################
+
+# Получить список терминов словаря, начиная с заданного
+
+IC_nexttrm = dll.IC_nexttrm
+IC_nexttrm.restype = c_int
+IC_nexttrm.argtypes = [c_char_p, c_char_p, c_int, c_char_p, c_int]
+
+# Получить список терминов словаря, начиная с заданного,
+# и расформатировать записи, соответствующие первой ссылке каждого термина
+
+IC_nexttrmgroup = dll.IC_nexttrmgroup
+IC_nexttrmgroup.restype = c_int
+IC_nexttrmgroup.argtypes = [c_char_p, c_char_p, c_int, c_char_p,
+                            c_char_p, c_int]
+
+# Получить список терминов словаря, начиная с заданного, в обратном порядке
+
+IC_prevtrm = dll.IC_prevtrm
+IC_prevtrm.restype = c_int
+IC_prevtrm.argtypes = [c_char_p, c_char_p, c_int, c_char_p, c_int]
+
+# Получить список терминов словаря, начиная с заданного, в обратном порядке
+# и расформатировать записи, соответствующие первой ссылке каждого термина
+
+IC_prevtrmgroup = dll.IC_prevtrmgroup
+IC_prevtrmgroup.restype = c_int
+IC_prevtrmgroup.argtypes = [c_char_p, c_char_p, c_int, c_char_p,
+                            c_char_p, c_int]
+
+# Получить список ссылок для заданного термина
+
+IC_posting = dll.IC_posting
+IC_posting.restype = c_int
+IC_posting.argtypes = [c_char_p, c_char_p, c_int, c_int, c_char_p, c_int]
+
+# Получить список первых ссылок для списка заданных терминов
+
+IC_postinggroup = dll.IC_postinggroup
+IC_postinggroup.restype = c_int
+IC_postinggroup.argtypes = [c_char_p, c_char_p, c_char_p, c_int]
+
+# Получить список ссылок для заданного термина и расформатировать
+# записи им соответствующие
+
+IC_postingformat = dll.IC_postingformat
+IC_postingformat.restype = c_int
+IC_postingformat.argtypes = [c_char_p, c_char_p, c_int, c_int, c_char_p,
+                             c_char_p, c_int, c_char_p, c_int]
+
+######################################################################
+# Функции поиска
+######################################################################
+
+# Прямой (по словарю) поиск записей по заданному поисковому выражению
+
+IC_search = dll.IC_search
+IC_search.restype = c_int
+IC_search.argtypes = [c_char_p, c_char_p, c_int, c_int, c_char_p,
+                      c_char_p, c_int]
+
+# Последовательный поиск по результату прямого поиска и/или
+# по заданному диапазону записей
+
+IC_searchscan = dll.IC_searchscan
+IC_searchscan.restype = c_int
+IC_searchscan.argtypes = [c_char_p, c_char_p, c_int, c_int, c_char_p,
+                          c_int, c_int, c_char_p, c_char_p, c_int]
+
+######################################################################
+# Функции форматирования
+######################################################################
+
+# Расформатирование записи, заданной по номеру (mfn)
+
+IC_sformat = dll.IC_sformat
+IC_sformat.restype = c_int
+IC_sformat.argtypes = [c_char_p, c_int, c_char_p, c_char_p, c_int]
+
+# Расформатирование записи в клиентском представлении
+
+IC_record_sformat = dll.IC_record_sformat
+IC_record_sformat.restype = c_int
+IC_record_sformat.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_int]
+
+# Расформатирование группы записей
+
+IC_sformatgroup = dll.IC_sformatgroup
+IC_sformatgroup.restype = c_int
+IC_sformatgroup.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_int]
