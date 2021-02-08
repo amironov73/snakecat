@@ -31,11 +31,17 @@ from irbis.dllwrapper import IC_reg, IC_unreg, \
     IC_isdeleted, IC_nexttrm, IC_nexttrmgroup, IC_prevtrm, \
     IC_prevtrmgroup, IC_posting, IC_postinggroup, IC_postingformat, \
     IC_search, IC_searchscan, IC_sformat, IC_record_sformat, \
-    IC_sformatgroup
+    IC_sformatgroup, IC_print, IC_stat, IC_gbl, IC_adm_restartserver, \
+    IC_adm_getdeletedlist, IC_adm_getalldeletedlists, IC_adm_dbempty, \
+    IC_adm_newdb, IC_adm_dbunlock, IC_adm_dbunlockmfn, \
+    IC_adm_dbstartcreatedictionry, IC_adm_dbstartreorgmaster, \
+    IC_adm_getclientlist, IC_adm_getclientslist, IC_adm_getprocesslist, \
+    IC_adm_setclientslist, IC_adm_dbdelete, IC_adm_dbstartreorgdictionry
 
 from irbis.comfort import connect, disconnect, read_record, \
     get_max_mfn, hide_window, error_to_string, ansi_to_string, \
-    utf_to_string, search, search_format, format_record, fm
+    utf_to_string, search, search_format, format_record, fm, \
+    print_form, get_deleted_records
 
 __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'ERR_BUFSIZE', 'TERM_NOT_EXISTS', 'TERM_LAST_IN_LIST',
@@ -68,7 +74,15 @@ __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'IC_prevtrmgroup', 'IC_posting', 'IC_postinggroup',
            'IC_postingformat', 'IC_search', 'IC_searchscan',
            'IC_sformat', 'IC_record_sformat', 'IC_sformatgroup',
+           'IC_print', 'IC_stat', 'IC_gbl', 'IC_adm_restartserver',
+           'IC_adm_getdeletedlist', 'IC_adm_getalldeletedlists',
+           'IC_adm_dbempty', 'IC_adm_newdb', 'IC_adm_dbunlock',
+           'IC_adm_dbunlockmfn', 'IC_adm_dbstartcreatedictionry',
+           'IC_adm_dbstartreorgmaster', 'IC_adm_getclientlist',
+           'IC_adm_getclientslist', 'IC_adm_getprocesslist',
+           'IC_adm_setclientslist', 'IC_adm_dbdelete',
+           'IC_adm_dbstartreorgdictionry',
            'connect', 'disconnect', 'read_record', 'get_max_mfn',
            'hide_window', 'error_to_string', 'ansi_to_string',
            'utf_to_string', 'search', 'search_format', 'format_record',
-           'fm']
+           'fm', 'print_form', 'get_deleted_records']

@@ -8,7 +8,8 @@ from ctypes import create_string_buffer, c_char_p, cast, byref
 from typing import TYPE_CHECKING
 from irbis.constants import ANSI, UTF, ERR_BUFSIZE
 from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
-    IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field
+    IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
+    IC_print, IC_adm_getdeletedlist
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List, Any
 
@@ -222,6 +223,61 @@ def format_record(database: str, mfn: int, format_spec: str) \
         else:
             lines = utf_to_string(answer.value).split('\r\n')
             return ret_code, lines[1]
+
+
+def print_form(database: str, table: str, head: str, model: str,
+               search_expression: str, min_mfn: int, max_mfn: int,
+               sequential: str, mfn_list: str) -> 'Tuple[int, str]':
+    """
+    Формирование выходной табличной формы.
+    :param database: имя базы данных
+    :param table: имя табличной формы с предшествующим '@'
+    :param head: заголовки над таблицей (до 3 строк)
+    :param model: значение модельного поля
+    :param search_expression: поисковое выражение
+    :param min_mfn: минимальный MFN
+    :param max_mfn: максимальный MFN
+    :param sequential: выражение для последовательного поиска
+    :param mfn_list: список MFN записей
+    :return: пара "код возврата-сформированная форма"
+    """
+    answer_size = 524288
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_print(database.encode(ANSI), table.encode(ANSI),
+                            head.encode(UTF), model.encode(UTF),
+                            search_expression.encode(UTF), min_mfn,
+                            max_mfn, sequential.encode(UTF),
+                            mfn_list.encode(ANSI), answer, answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            result = utf_to_string(answer.value)
+            return ret_code, result
+
+
+def get_deleted_records(database: str) -> 'Tuple[int, List[int]]':
+    """
+    Получение списка удаленных записей.
+    :param database: имя базы данных
+    :return: пара "код возврата-список MFN удаленных записей"
+    """
+    answer_size = 32768
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_adm_getdeletedlist(database.encode(ANSI),
+                                         answer, answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            if ret_code < 0:
+                return ret_code, []
+
+            lines = utf_to_string(answer.value).split('\r\n')
+            result = [int(line.split('#', 1)[1]) for line in lines if line]
+            return ret_code, result
 
 
 def fm(record: 'Any', tag: int, subfield: str = '') -> str:

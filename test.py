@@ -9,7 +9,7 @@ from ctypes import create_string_buffer
 from irbis import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG, error_to_string, utf_to_string, \
     IC_nfields, IC_fieldn, IC_field, search, search_format, \
-    format_record
+    format_record, print_form, get_deleted_records
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно
@@ -27,7 +27,7 @@ DB = 'IBIS'
 rc, ini = connect(HOST, PORT, ARM, USER, PASSWORD)
 print('connect=', rc)
 if rc < 0:
-    print(error_to_string(rc))
+    print('ERROR:', error_to_string(rc))
     print('EXIT')
     sys.exit(1)
 else:
@@ -58,7 +58,7 @@ if rc >= 0:
 
 # Получение максимального MFN
 rc = get_max_mfn(DB)
-print('IC_maxmfn=', rc)
+print('get_max_mfn=', rc)
 
 # Поиск записей
 print()
@@ -78,10 +78,25 @@ print('format_record=', rc)
 if rc >= 0:
     print('format_record=', line)
 
+# Табличная форма
+print()
+rc, form = print_form(DB, '@tabf1w', 'ЗАГОЛОВОК ФОРМЫ', '',
+                      '"T=ALGEBR$"', 0, 0, '', '')
+print('print_form=', rc)
+if rc >= 0:
+    print('print_form=', form)
+
+# Список удаленных записей
+print()
+rc, mfns = get_deleted_records(DB)
+print('get_deleted_records=', rc)
+if rc >= 0:
+    print('get_deleted_records=', mfns)
+
 # Отключение от сервера
 print()
 rc = disconnect(USER)
-print('IC_unreg=', rc)
+print('disconnect=', rc)
 
 print()
 print('That''s All, Folks!')

@@ -49,7 +49,7 @@ for mfn in found[:10]:
 
     # Форматирование записи
     _c, description = format_record(DB, mfn, '@brief')
-    print('Биб. описание', description)
+    print('Биб. описание:', description)
 
     print()  # Добавляем пустую строку
 

@@ -366,3 +366,124 @@ IC_record_sformat.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_int]
 IC_sformatgroup = dll.IC_sformatgroup
 IC_sformatgroup.restype = c_int
 IC_sformatgroup.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_int]
+
+######################################################################
+# Функции пакетной обработки
+######################################################################
+
+# Формирование выходной табличной формы
+
+IC_print = dll.IC_print
+IC_print.restype = c_int
+IC_print.argtypes = [c_char_p, c_char_p, c_char_p, c_char_p, c_char_p,
+                     c_int, c_int, c_char_p, c_char_p, c_char_p, c_int]
+
+# Формирование выходной формы в виде статистических распределений
+
+IC_stat = dll.IC_stat
+IC_stat.restype = IC_stat
+IC_stat.argtypes = [c_char_p, c_char_p, c_char_p, c_int, c_int,
+                    c_char_p, c_char_p, c_char_p, c_int]
+
+# Выполнение задания на глобальную корректировку
+
+IC_gbl = dll.IC_gbl
+IC_gbl.restype = c_int
+IC_gbl.argtypes = [c_char_p, c_int, c_char_p, c_char_p, c_int, c_int,
+                   c_char_p, c_char_p, c_char_p, c_int]
+
+######################################################################
+# Функции администратора
+######################################################################
+
+# Перезапустить сервер ИРБИС64
+
+IC_adm_restartserver = dll.IC_adm_restartserver
+IC_adm_restartserver.restype = c_int
+IC_adm_restartserver.argtypes = []
+
+# Получить список удаленных документов
+
+IC_adm_getdeletedlist = dll.IC_adm_getDeletedList
+IC_adm_getdeletedlist.restype = c_int
+IC_adm_getdeletedlist.argtypes = [c_char_p, c_char_p, c_int]
+
+# Получить общие сведения о базе данных: списки
+# удаленных/заблокированных/неактуализированных, максимальный MFN
+# и признак монопольной блокировки
+
+IC_adm_getalldeletedlists = dll.IC_adm_getallDeletedLists
+IC_adm_getalldeletedlists.restype = c_int
+IC_adm_getalldeletedlists.argtypes = [c_char_p, c_char_p, c_int]
+
+# Опустошить базу данных
+
+IC_adm_dbempty = dll.IC_adm_dbempty
+IC_adm_dbempty.restype = c_int
+IC_adm_dbempty.argtypes = [c_char_p]
+
+# Удалить базу данных
+
+IC_adm_dbdelete = dll.IC_adm_dbdelete
+IC_adm_dbdelete.restype = c_int
+IC_adm_dbdelete.argtypes = [c_char_p]
+
+# Создать новую базу данных электронного каталога
+
+IC_adm_newdb = dll.IC_adm_newdb
+IC_adm_newdb.restype = c_int
+IC_adm_newdb.argtypes = [c_char_p, c_char_p, c_int]
+
+# Снять монопольную блокировку базы данных
+
+IC_adm_dbunlock = dll.IC_adm_DBunlock
+IC_adm_dbunlock.restype = c_int
+IC_adm_dbunlock.argtypes = [c_char_p]
+
+# Снять блокировку заданных записей
+
+IC_adm_dbunlockmfn = dll.IC_adm_DBunlockMFN
+IC_adm_dbunlockmfn.restype = c_int
+IC_adm_dbunlockmfn.argtypes = [c_char_p, c_char_p]
+
+# Создать словарь базы данных заново
+
+IC_adm_dbstartcreatedictionry = dll.IC_adm_DBStartCreateDictionry
+IC_adm_dbstartcreatedictionry.restype = c_int
+IC_adm_dbstartcreatedictionry.argtypes = [c_char_p]
+
+# Реорганизовать словарь базы данных
+
+IC_adm_dbstartreorgdictionry = dll.IC_adm_DBStartReorgDictionry
+IC_adm_dbstartreorgdictionry.restype = c_int
+IC_adm_dbstartreorgdictionry.argtypes = [c_char_p]
+
+# Реорганизовать файл документов базы данных
+
+IC_adm_dbstartreorgmaster = dll.IC_adm_DBStartReorgMaster
+IC_adm_dbstartreorgmaster.restype = c_int
+IC_adm_dbstartreorgmaster.argtypes = [c_char_p]
+
+# Получить список зарегистрированных (текущих) клиентов
+
+IC_adm_getclientlist = dll.IC_adm_getClientlist
+IC_adm_getclientlist.restype = c_int
+IC_adm_getclientlist.argtypes = [c_char_p, c_int]
+
+# Получить список клиентов для доступа к серверу
+
+IC_adm_getclientslist = dll.IC_adm_getClientslist
+IC_adm_getclientslist.restype = c_int
+IC_adm_getclientslist.argtypes = [c_char_p, c_int]
+
+# Получить список запущенных процессов на сервере
+
+IC_adm_getprocesslist = dll.IC_adm_getProcessList
+IC_adm_getprocesslist.restype = c_int
+IC_adm_getprocesslist.argtypes = [c_char_p, c_int]
+
+# Обновить список клиентов для доступа к серверу
+
+IC_adm_setclientslist = dll.IC_adm_SetClientslist
+IC_adm_setclientslist.restype = c_int
+IC_adm_setclientslist.argtypes = [c_char_p]

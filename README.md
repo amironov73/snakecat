@@ -37,18 +37,18 @@ else:
 
 # Read one record from the server
 rc, record = read_record(DB, 1)
-print('IC_read=', rc)
+print('read_record=', rc)
 if rc >= 0:
     print('IC_read=', record)
 
 # Get the maximal MFN
 rc = get_max_mfn(DB)
-print('IC_maxmfn=', rc)
+print('get_max_mfn=', rc)
 
 # Disconnect from the server
 print()
 rc = disconnect(USER)
-print('IC_unreg=', rc)
+print('disconnect=', rc)
 
 print()
 print('That''s All, Folks!')
