@@ -36,12 +36,14 @@ from irbis.dllwrapper import IC_reg, IC_unreg, \
     IC_adm_newdb, IC_adm_dbunlock, IC_adm_dbunlockmfn, \
     IC_adm_dbstartcreatedictionry, IC_adm_dbstartreorgmaster, \
     IC_adm_getclientlist, IC_adm_getclientslist, IC_adm_getprocesslist, \
-    IC_adm_setclientslist, IC_adm_dbdelete, IC_adm_dbstartreorgdictionry
+    IC_adm_setclientslist, IC_adm_dbdelete, IC_adm_dbstartreorgdictionry, \
+    IC_nooperation, IC_reset_delim, IC_delim_reset
 
 from irbis.comfort import connect, disconnect, read_record, \
-    get_max_mfn, hide_window, error_to_string, ansi_to_string, \
-    utf_to_string, search, search_format, format_record, fm, \
-    print_form, get_deleted_records
+    get_max_mfn, hide_window, error_to_string, from_ansi, \
+    from_utf, search, search_format, format_record, fm, \
+    print_form, get_deleted_records, to_ansi, to_utf, from_irbis, \
+    to_irbis
 
 __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'ERR_BUFSIZE', 'TERM_NOT_EXISTS', 'TERM_LAST_IN_LIST',
@@ -83,6 +85,7 @@ __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'IC_adm_setclientslist', 'IC_adm_dbdelete',
            'IC_adm_dbstartreorgdictionry',
            'connect', 'disconnect', 'read_record', 'get_max_mfn',
-           'hide_window', 'error_to_string', 'ansi_to_string',
-           'utf_to_string', 'search', 'search_format', 'format_record',
-           'fm', 'print_form', 'get_deleted_records']
+           'hide_window', 'error_to_string', 'from_ansi',
+           'from_utf', 'search', 'search_format', 'format_record',
+           'fm', 'print_form', 'get_deleted_records', 'to_ansi',
+           'to_utf', 'from_irbis', 'to_irbis']

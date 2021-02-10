@@ -487,3 +487,31 @@ IC_adm_getprocesslist.argtypes = [c_char_p, c_int]
 IC_adm_setclientslist = dll.IC_adm_SetClientslist
 IC_adm_setclientslist.restype = c_int
 IC_adm_setclientslist.argtypes = [c_char_p]
+
+######################################################################
+# Вспомогательные функции
+######################################################################
+
+# Подтверждение регистрации
+
+IC_nooperation = dll.IC_nooperation
+IC_nooperation.restype = c_int
+IC_nooperation.argtypes = []
+
+# Получить элемент исходной ссылки
+
+IC_getposting = dll.IC_getposting
+IC_getposting.restype = c_int
+IC_getposting.argtypes = [c_char_p, c_int]
+
+# Заменить реальные разделители строк $0D0A на псевдоразделители $3130
+
+IC_reset_delim = dll.IC_reset_delim
+IC_reset_delim.restype = c_char_p
+IC_reset_delim.argtypes = [c_char_p]
+
+# Заменить псевдоразделители $3130 на реальные разделители строк $0D0A
+
+IC_delim_reset = dll.IC_delim_reset
+IC_delim_reset.restype = c_char_p
+IC_delim_reset.argtypes = [c_char_p]

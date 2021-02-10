@@ -7,7 +7,7 @@
 import sys
 from ctypes import create_string_buffer
 from irbis import connect, disconnect, read_record, get_max_mfn, \
-    hide_window, IRBIS_CATALOG, error_to_string, utf_to_string, \
+    hide_window, IRBIS_CATALOG, error_to_string, from_utf, \
     IC_nfields, IC_fieldn, IC_field, search, search_format, \
     format_record, print_form, get_deleted_records
 
@@ -40,7 +40,7 @@ print('IC_read=', rc)
 if rc < 0:
     print('IC_read=', error_to_string(rc))
 else:
-    print('IC_read=', utf_to_string(record.value))
+    print('IC_read=', from_utf(record.value))
 
 # Получение количества полей
 print()
@@ -54,7 +54,7 @@ answer = create_string_buffer(32000)
 rc = IC_field(record.value, rc, b'a', answer, len(answer))
 print('IC_field=', rc)
 if rc >= 0:
-    print('IC_field=', utf_to_string(answer.value))
+    print('IC_field=', from_utf(answer.value))
 
 # Получение максимального MFN
 rc = get_max_mfn(DB)

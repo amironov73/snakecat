@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 from irbis.constants import ANSI, UTF, ERR_BUFSIZE
 from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
-    IC_print, IC_adm_getdeletedlist
+    IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List, Any
 
@@ -60,7 +60,7 @@ def error_to_string(ret_code: int) -> str:
         return 'неизвестная ошибка'
 
 
-def ansi_to_string(buffer: 'Optional[bytes]') -> str:
+def from_ansi(buffer: 'Optional[bytes]') -> str:
     """
     Превращаем буфер ctypes в обычную строку
     :param buffer: буфер
@@ -71,7 +71,7 @@ def ansi_to_string(buffer: 'Optional[bytes]') -> str:
     return ''
 
 
-def utf_to_string(buffer: 'Optional[bytes]') -> str:
+def from_utf(buffer: 'Optional[bytes]') -> str:
     """
     Превращаем буфер ctypes в обычную строку
     :param buffer: буфер
@@ -80,6 +80,42 @@ def utf_to_string(buffer: 'Optional[bytes]') -> str:
     if buffer:
         return buffer.rstrip(b'0').decode(UTF)
     return ''
+
+
+def to_ansi(text: str) -> bytes:
+    """
+    Конвертируем строку в байты в кодировке ANSI.
+    :param text: текст для конверсии
+    :return: ANSI-байты
+    """
+    return text.encode(ANSI)
+
+
+def to_utf(text: str) -> bytes:
+    """
+    Конвертируем строку в байты в кодировке UTF-8.
+    :param text: текст для конверсии
+    :return: UTF-байты
+    """
+    return text.encode(UTF)
+
+
+def to_irbis(text: bytes) -> bytes:
+    """
+    Заменяем разделители строк на псевдоразделители.
+    :param text: текст для обработки
+    :return: обработанный текст
+    """
+    return IC_reset_delim(text)
+
+
+def from_irbis(text: bytes) -> bytes:
+    """
+    Заменяем псевдоразделители строк на настоящие разделители.
+    :param text: текст для обработки
+    :return: обработанный текст
+    """
+    return IC_delim_reset(text)
 
 
 def hide_window() -> None:
@@ -105,17 +141,16 @@ def connect(host: str, port: str, arm: str, user: str,
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_reg(host.encode(ANSI), port.encode(ANSI),
-                          arm.encode(ANSI), user.encode(ANSI),
-                          password.encode(ANSI), byref(answer),
-                          answer_size)
+        ret_code = IC_reg(to_ansi(host), to_ansi(port), to_ansi(arm),
+                          to_ansi(user), to_ansi(password),
+                          byref(answer), answer_size)
         if ret_code == ERR_BUFSIZE:
             # на всякий случай разрегистриемся
             IC_unreg(user.encode(ANSI))
             # повторим попытку с увеличенным буфером
             answer_size *= 2
         else:
-            return ret_code, ansi_to_string(answer.value)
+            return ret_code, from_ansi(answer.value)
 
 
 def disconnect(user: str) -> int:
@@ -123,7 +158,7 @@ def disconnect(user: str) -> int:
     Отключение от сервера.
     :return: код возврата
     """
-    ret_code = IC_unreg(user.encode(ANSI))
+    ret_code = IC_unreg(to_ansi(user))
     return ret_code
 
 
@@ -133,7 +168,7 @@ def get_max_mfn(database: str) -> int:
     :param database: имя базы данных
     :return: код возврата
     """
-    ret_code = IC_maxmfn(database.encode(ANSI))
+    ret_code = IC_maxmfn(to_ansi(database))
     return ret_code
 
 
@@ -148,7 +183,7 @@ def read_record(database: str, mfn: int) -> 'Tuple[int, c_char_p]':
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_read(database.encode(ANSI), mfn, 0, byref(answer),
+        ret_code = IC_read(to_ansi(database), mfn, 0, byref(answer),
                            answer_size)
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
@@ -167,13 +202,12 @@ def search(database: str, expression: str) -> 'Tuple[int, List[int]]':
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_search(database.encode(ANSI),
-                             expression.encode(UTF), 32768, 1,
-                             b'', answer, answer_size)
+        ret_code = IC_search(to_ansi(database), to_utf(expression),
+                             32768, 1, b'', answer, answer_size)
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
         else:
-            lines = utf_to_string(answer.value).split('#\r\n')
+            lines = from_utf(answer.value).split('#\r\n')
             result = [int(line) for line in lines if line]
             return ret_code, result
 
@@ -191,14 +225,13 @@ def search_format(database: str, expression: str, format_spec: str) \
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_search(database.encode(ANSI),
-                             expression.encode(UTF), 32768, 1,
-                             format_spec.encode(UTF),
-                             answer, answer_size)
+        ret_code = IC_search(to_ansi(database), to_utf(expression),
+                             32768, 1, to_utf(format_spec), answer,
+                             answer_size)
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
         else:
-            lines = utf_to_string(answer.value).split('\r\n')
+            lines = from_utf(answer.value).split('\r\n')
             return ret_code, lines
 
 
@@ -215,13 +248,12 @@ def format_record(database: str, mfn: int, format_spec: str) \
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_sformat(database.encode(ANSI),
-                              mfn, format_spec.encode(UTF),
+        ret_code = IC_sformat(to_ansi(database), mfn, to_utf(format_spec),
                               answer, answer_size)
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
         else:
-            lines = utf_to_string(answer.value).split('\r\n')
+            lines = from_utf(answer.value).split('\r\n')
             return ret_code, lines[1]
 
 
@@ -245,15 +277,14 @@ def print_form(database: str, table: str, head: str, model: str,
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_print(database.encode(ANSI), table.encode(ANSI),
-                            head.encode(UTF), model.encode(UTF),
-                            search_expression.encode(UTF), min_mfn,
-                            max_mfn, sequential.encode(UTF),
-                            mfn_list.encode(ANSI), answer, answer_size)
+        ret_code = IC_print(to_ansi(database), to_ansi(table), to_utf(head),
+                            to_ansi(model), to_utf(search_expression), min_mfn,
+                            max_mfn, to_utf(sequential), to_ansi(mfn_list),
+                            answer, answer_size)
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
         else:
-            result = utf_to_string(answer.value)
+            result = from_utf(answer.value)
             return ret_code, result
 
 
@@ -267,15 +298,15 @@ def get_deleted_records(database: str) -> 'Tuple[int, List[int]]':
     while True:
         buffer = create_string_buffer(answer_size)
         answer = cast(buffer, c_char_p)
-        ret_code = IC_adm_getdeletedlist(database.encode(ANSI),
-                                         answer, answer_size)
+        ret_code = IC_adm_getdeletedlist(to_ansi(database), answer,
+                                         answer_size)
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
         else:
             if ret_code < 0:
                 return ret_code, []
 
-            lines = utf_to_string(answer.value).split('\r\n')
+            lines = from_utf(answer.value).split('\r\n')
             result = [int(line.split('#', 1)[1]) for line in lines if line]
             return ret_code, result
 
@@ -294,6 +325,5 @@ def fm(record: 'Any', tag: int, subfield: str = '') -> str:
     answer_size = 32768
     while True:
         answer = create_string_buffer(answer_size)
-        IC_field(record.value, index, subfield.encode(ANSI),
-                 answer, answer_size)
-        return utf_to_string(answer.value)
+        IC_field(record.value, index, to_ansi(subfield), answer, answer_size)
+        return from_utf(answer.value)
