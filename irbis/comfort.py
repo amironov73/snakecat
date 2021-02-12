@@ -311,15 +311,16 @@ def get_deleted_records(database: str) -> 'Tuple[int, List[int]]':
             return ret_code, result
 
 
-def fm(record: 'Any', tag: int, subfield: str = '') -> str:
+def fm(record: 'Any', tag: int, subfield: str = '', repeat: int = 1) -> str:
     """
     Извлечение значения поля или подполя с указанной меткой.
     :param record: запись
     :param tag: метка поля
     :param subfield: разделитель подполя (опционально)
+    :param repeat: номер повторения поля, отсчет с 1 (по умолчанию 1)
     :return: значение поля или подполя
     """
-    index = IC_fieldn(record.value, tag, 1)
+    index = IC_fieldn(record.value, tag, repeat)
     if index < 0:
         return ''
     answer_size = 32768
