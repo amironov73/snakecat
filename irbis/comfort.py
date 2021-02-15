@@ -6,10 +6,12 @@
 
 from ctypes import create_string_buffer, c_char_p, cast, byref
 from typing import TYPE_CHECKING
-from irbis.constants import ANSI, UTF, ERR_BUFSIZE
+from irbis.constants import ANSI, UTF, ERR_BUFSIZE, TERM_NOT_EXISTS, \
+    TERM_FIRST_IN_LIST, TERM_LAST_IN_LIST
 from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
-    IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset
+    IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset, \
+    IC_nexttrm, IC_prevtrm
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List, Any
 
@@ -328,3 +330,50 @@ def fm(record: 'Any', tag: int, subfield: str = '', repeat: int = 1) -> str:
         answer = create_string_buffer(answer_size)
         IC_field(record.value, index, to_ansi(subfield), answer, answer_size)
         return from_utf(answer.value)
+
+
+def read_terms(database: str, first_term: str, term_count: int = 100,
+               reverse: bool = False) -> 'Tuple[int, List[Tuple[str, int]]]':
+    """
+    Чтение терминов словаря, начиная с указанного.
+    :param database: имя базы данных
+    :param first_term: первый термин
+    :param term_count: необходимое количество терминов
+    :param reverse: в обратном порядке?
+    :return: кортеж "код возврата-список кортежей
+    'термин-количество ссылок на него'"
+    """
+    function = IC_prevtrm if reverse else IC_nexttrm
+    answer_size = 32768
+    while True:
+        answer = create_string_buffer(answer_size)
+        ret_code = function(to_ansi(database), to_utf(first_term), term_count,
+                            answer, answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            good_codes = [TERM_NOT_EXISTS, TERM_FIRST_IN_LIST,
+                          TERM_LAST_IN_LIST]
+            if ret_code < 0 and ret_code not in good_codes:
+                return ret_code, []
+
+            if ret_code in good_codes:
+                ret_code = 0
+            lines = from_utf(answer.value).split('\r\n')
+            parts = [line.split('#', 1) for line in lines if line]
+            result = [(part[1], int(part[0])) for part in parts
+                      if parts[1]]
+            return ret_code, result
+
+
+def trim_prefix(terms: 'List[Tuple[str, int]]', prefix: str) -> \
+                'List[Tuple[str, int]]':
+    """
+    Удаляет указанный префикс у всех терминов в списке.
+    :param terms: термины, подлежащие обработке
+    :param prefix: префикс для удаления
+    :return: список кортежей "термин-количество ссылок на него"
+    """
+    prefix_length = len(prefix)
+    result = [(term[0][prefix_length:], term[1]) for term in terms]
+    return result

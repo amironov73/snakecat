@@ -9,7 +9,8 @@ from ctypes import create_string_buffer
 from irbis import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG, error_to_string, from_utf, \
     IC_nfields, IC_fieldn, IC_field, search, search_format, \
-    format_record, print_form, get_deleted_records
+    format_record, print_form, get_deleted_records, read_terms, \
+    trim_prefix
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно
@@ -85,6 +86,13 @@ rc, form = print_form(DB, '@tabf1w', 'ЗАГОЛОВОК ФОРМЫ', '',
 print('print_form=', rc)
 if rc >= 0:
     print('print_form=', form)
+
+# Список терминов словаря
+print()
+rc, terms = read_terms(DB, 'K=БЕТОН')
+print('read_terms=', rc)
+if rc >= 0:
+    print('read_terms', trim_prefix(terms, 'K='))
 
 # Список удаленных записей
 print()
