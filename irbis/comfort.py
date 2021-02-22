@@ -7,11 +7,12 @@
 from ctypes import create_string_buffer, c_char_p, cast, byref
 from typing import TYPE_CHECKING
 from irbis.constants import ANSI, UTF, ERR_BUFSIZE, TERM_NOT_EXISTS, \
-    TERM_FIRST_IN_LIST, TERM_LAST_IN_LIST
+    TERM_FIRST_IN_LIST, TERM_LAST_IN_LIST, DBNPATH2
 from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
     IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset, \
-    IC_nexttrm, IC_prevtrm
+    IC_nexttrm, IC_prevtrm, IC_getresourse, IC_clearresourse, \
+    IC_putresourse
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List, Any
 
@@ -377,3 +378,51 @@ def trim_prefix(terms: 'List[Tuple[str, int]]', prefix: str) -> \
     prefix_length = len(prefix)
     result = [(term[0][prefix_length:], term[1]) for term in terms]
     return result
+
+
+def read_file(database: str, file_name: str, path: int = DBNPATH2) \
+        -> 'Tuple[int, str]':
+    """
+    Чтение текстового файла с сервера.
+    :param database: имя базы данных
+    :param file_name: имя файла
+    :param path: код пути
+    :return: код возврата и содержимое файла (пустая строка,
+    если такого файла нет)
+    """
+    answer_size = 32768
+    while True:
+        buffer = create_string_buffer(answer_size)
+        answer = cast(buffer, c_char_p)
+        ret_code = IC_getresourse(path, to_ansi(database),
+                                  to_ansi(file_name), byref(answer),
+                                  answer_size)
+        if ret_code == ERR_BUFSIZE:
+            answer_size *= 2
+        else:
+            if ret_code < 0:
+                return ret_code, ''
+            return ret_code, from_ansi(answer.value)
+
+
+def clear_cache() -> int:
+    """
+    Очистка локального кэша форматов, меню и прочих ресурсов,
+    прочитанных с сервера
+    :return: код возврата
+    """
+    return IC_clearresourse()
+
+
+def write_file(database: str, file_name: str, content: str,
+               path: int = DBNPATH2) -> int:
+    """
+    Запись текстового файла на серверю
+    :param database: имя базы данных
+    :param file_name: имя файла
+    :param content: содержимое файла
+    :param path: код пути
+    :return: код возврата
+    """
+    return IC_putresourse(path, to_ansi(database), to_ansi(file_name),
+                          to_irbis(to_ansi(content)))

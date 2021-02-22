@@ -10,7 +10,7 @@ from irbis import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG, error_to_string, from_utf, \
     IC_nfields, IC_fieldn, IC_field, search, search_format, \
     format_record, print_form, get_deleted_records, read_terms, \
-    trim_prefix
+    trim_prefix, read_file, write_file
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно
@@ -100,6 +100,20 @@ rc, mfns = get_deleted_records(DB)
 print('get_deleted_records=', rc)
 if rc >= 0:
     print('get_deleted_records=', mfns)
+
+# Чтение файлов с сервера
+print()
+rc, content = read_file(DB, 'yesno.mnu')
+print('read_file=', rc)
+if rc >= 0:
+    print('read_file=', content)
+
+# Запись файлов на сервер
+print()
+rc = write_file(DB, 'not_exist.txt',
+                'Это тестовый файл\r\nНичего интересного в нем нет')
+print()
+print('write_file=', rc)
 
 # Отключение от сервера
 print()
