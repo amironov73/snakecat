@@ -11,7 +11,8 @@ environment:
 
 install:
   - python -m pip install --upgrade pip
-  - pip install --upgrade setuptools wheel coverage mypy flake8 twine pylint pygount
+  - pip install --upgrade wheel
+  - pip install --upgrade setuptools coverage mypy flake8 twine pylint pygount
 
 before_build:
   - pygount irbis -f summary -s py
