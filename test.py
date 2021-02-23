@@ -5,12 +5,12 @@
 """
 
 import sys
-from ctypes import create_string_buffer
+from ctypes import create_string_buffer, cast, c_char_p
 from irbis import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG, error_to_string, from_utf, \
     IC_nfields, IC_fieldn, IC_field, search, search_format, \
-    format_record, print_form, get_deleted_records, read_terms, \
-    trim_prefix, read_file, write_file
+    format_record, print_form, read_terms, trim_prefix, read_file, \
+    create_record, add_field, write_record, IC_getmfn
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно
@@ -58,8 +58,8 @@ if rc >= 0:
     print('IC_field=', from_utf(answer.value))
 
 # Получение максимального MFN
-rc = get_max_mfn(DB)
-print('get_max_mfn=', rc)
+max_mfn = get_max_mfn(DB)
+print('get_max_mfn=', max_mfn)
 
 # Поиск записей
 print()
@@ -94,12 +94,12 @@ print('read_terms=', rc)
 if rc >= 0:
     print('read_terms', trim_prefix(terms, 'K='))
 
-# Список удаленных записей
-print()
-rc, mfns = get_deleted_records(DB)
-print('get_deleted_records=', rc)
-if rc >= 0:
-    print('get_deleted_records=', mfns)
+# # Список удаленных записей
+# print()
+# rc, mfns = get_deleted_records(DB)
+# print('get_deleted_records=', rc)
+# if rc >= 0:
+#     print('get_deleted_records=', mfns)
 
 # Чтение файлов с сервера
 print()
@@ -108,12 +108,39 @@ print('read_file=', rc)
 if rc >= 0:
     print('read_file=', content)
 
-# Запись файлов на сервер
+# # Запись файла на сервер
+# print()
+# rc = write_file(DB, 'not_exist.txt',
+#                 'Это тестовый файл\r\nНичего интересного в нем нет')
+# print()
+# print('write_file=', rc)
+
+# Создание записи
 print()
-rc = write_file(DB, 'not_exist.txt',
-                'Это тестовый файл\r\nНичего интересного в нем нет')
-print()
-print('write_file=', rc)
+record = create_string_buffer(32768)
+rc = create_record(record)
+print('create_record=', rc)
+if rc >= 0:
+    print('create_record=', from_utf(record.value))
+    ptr = cast(record, c_char_p)
+    add_field(record, 200, '^aАвтор^eПодзаголовочные^fОтветственность')
+    add_field(record, 300, 'Какой-то комментарий')
+    rc = add_field(record, 920, 'PAZK')
+    print('add_field=', rc)
+    if rc >= 0:
+        print('add_field=', from_utf(record.value))
+        mfn = IC_getmfn(ptr)
+        print('IC_getmfn=', mfn)
+        print(from_utf(record.value))
+        rc = write_record(DB, record)
+        print('write_record=', rc)
+        if rc >= 0:
+            print('write_record=', from_utf(record.value))
+
+# _, record = read_record(DB, 1)
+# add_field(record, 300, 'Эта запись модифицирована из Python')
+# rc = write_record(DB, record)
+# print('write_record=', rc)
 
 # Отключение от сервера
 print()

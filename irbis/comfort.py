@@ -12,9 +12,11 @@ from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
     IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset, \
     IC_nexttrm, IC_prevtrm, IC_getresourse, IC_clearresourse, \
-    IC_putresourse
+    IC_putresourse, IC_runlock, IC_ifupdate, IC_recdummy, IC_fldadd, \
+    IC_update
 if TYPE_CHECKING:
-    from typing import Optional, Tuple, List, Any
+    from typing import Optional, Tuple, List
+    from ctypes import Array, c_char
 
 
 def error_to_string(ret_code: int) -> str:
@@ -175,7 +177,7 @@ def get_max_mfn(database: str) -> int:
     return ret_code
 
 
-def read_record(database: str, mfn: int) -> 'Tuple[int, c_char_p]':
+def read_record(database: str, mfn: int) -> 'Tuple[int, Array[c_char]]':
     """
     Чтение записи с сервера.
     :param database: имя базы данных
@@ -191,7 +193,7 @@ def read_record(database: str, mfn: int) -> 'Tuple[int, c_char_p]':
         if ret_code == ERR_BUFSIZE:
             answer_size *= 2
         else:
-            return ret_code, answer
+            return ret_code, buffer
 
 
 def search(database: str, expression: str) -> 'Tuple[int, List[int]]':
@@ -314,7 +316,8 @@ def get_deleted_records(database: str) -> 'Tuple[int, List[int]]':
             return ret_code, result
 
 
-def fm(record: 'Any', tag: int, subfield: str = '', repeat: int = 1) -> str:
+def fm(record: 'Array[c_char]', tag: int, subfield: str = '',
+       repeat: int = 1) -> str:
     """
     Извлечение значения поля или подполя с указанной меткой.
     :param record: запись
@@ -426,3 +429,66 @@ def write_file(database: str, file_name: str, content: str,
     """
     return IC_putresourse(path, to_ansi(database), to_ansi(file_name),
                           to_irbis(to_ansi(content)))
+
+
+def unlock_record(database: str, mfn: int) -> int:
+    """
+    Разблокирование указанной записи.
+    :param database: имя базы данных
+    :param mfn: MFN записи
+    :return: код возврата
+    """
+    return IC_runlock(to_ansi(database), mfn)
+
+
+def actualize_record(database: str, mfn: int) -> int:
+    """
+    Актуализация указанной записи.
+    :param database: имя базы данных
+    :param mfn: MFN записи
+    :return: код возврата
+    """
+    return IC_ifupdate(to_ansi(database), mfn)
+
+
+def actualize_database(database: str) -> int:
+    """
+    Актуализация всех неактуализированных записей в указанной базе данных.
+    :param database: имя базы данных
+    :return: код возврата
+    """
+    return IC_ifupdate(to_ansi(database), 0)
+
+
+def create_record(record: 'Array[c_char]') -> int:
+    """
+    Создание пустой записи.
+    :param record: буфер для создаваемой записи
+    :return: код возврата
+    """
+    ptr = cast(record, c_char_p)
+    return IC_recdummy(ptr, len(record))
+
+
+def add_field(record: 'Array[c_char]', tag: int, field: str) -> int:
+    """
+    Добавление поля в конец записи.
+    :param record: запись
+    :param tag: метка поля
+    :param field: текст добавляемого поля
+    :return: код возврата
+    """
+    ptr = cast(record, c_char_p)
+    return IC_fldadd(ptr, tag, 0, to_utf(field), len(record))
+
+
+def write_record(database: str, record: 'Array[c_char]') -> int:
+    """
+    Сохранение или обновление записи в указанной базе данных.
+    Не работает!!!
+    :param database: имя базы данных
+    :param record: запись, подлежащая сохранению
+    :return: код возврата
+    """
+    ptr = cast(record, c_char_p)
+    return IC_update(to_ansi(database), 0, 1, byref(ptr), len(record))
