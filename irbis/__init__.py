@@ -45,7 +45,8 @@ from irbis.comfort import connect, disconnect, read_record, \
     print_form, get_deleted_records, to_ansi, to_utf, from_irbis, \
     to_irbis, read_terms, trim_prefix, read_file, clear_cache, \
     write_file, unlock_record, actualize_record, actualize_database, \
-    create_record, add_field, write_record
+    create_record, add_field, write_record, replace_field, \
+    remove_field
 
 __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'ERR_BUFSIZE', 'TERM_NOT_EXISTS', 'TERM_LAST_IN_LIST',
@@ -94,4 +95,5 @@ __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'to_utf', 'from_irbis', 'to_irbis', 'read_terms',
            'trim_prefix', 'read_file', 'clear_cache', 'write_file',
            'unlock_record', 'actualize_record', 'actualize_database',
-           'create_record', 'add_field', 'write_record']
+           'create_record', 'add_field', 'write_record', 'replace_field',
+           'remove_field']

@@ -1,7 +1,7 @@
 # coding: utf-8
 
 """
-Простой тест работоспособности обёртки.
+Простой тест работоспособности обертки.
 """
 
 import sys
@@ -129,9 +129,6 @@ if rc >= 0:
     print('add_field=', rc)
     if rc >= 0:
         print('add_field=', from_utf(record.value))
-        mfn = IC_getmfn(ptr)
-        print('IC_getmfn=', mfn)
-        print(from_utf(record.value))
         rc = write_record(DB, record)
         print('write_record=', rc)
         if rc >= 0:

@@ -133,7 +133,7 @@ IC_readformat.argtypes = [c_char_p, c_int, c_int, c_char_p,
 
 # Запись/обновление записи в базе данных
 
-IC_update = dll.IC_read
+IC_update = dll.IC_update
 IC_update.restype = c_int
 IC_update.argtypes = [c_char_p, c_int, c_int, POINTER(c_char_p), c_int]
 

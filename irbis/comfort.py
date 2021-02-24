@@ -7,13 +7,13 @@
 from ctypes import create_string_buffer, c_char_p, cast, byref
 from typing import TYPE_CHECKING
 from irbis.constants import ANSI, UTF, ERR_BUFSIZE, TERM_NOT_EXISTS, \
-    TERM_FIRST_IN_LIST, TERM_LAST_IN_LIST, DBNPATH2
+    TERM_FIRST_IN_LIST, TERM_LAST_IN_LIST, DBNPATH2, ERR_UNKNOWN
 from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
     IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset, \
     IC_nexttrm, IC_prevtrm, IC_getresourse, IC_clearresourse, \
     IC_putresourse, IC_runlock, IC_ifupdate, IC_recdummy, IC_fldadd, \
-    IC_update
+    IC_update, IC_fldrep
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List
     from ctypes import Array, c_char
@@ -326,13 +326,14 @@ def fm(record: 'Array[c_char]', tag: int, subfield: str = '',
     :param repeat: номер повторения поля, отсчет с 1 (по умолчанию 1)
     :return: значение поля или подполя
     """
-    index = IC_fieldn(record.value, tag, repeat)
+    ptr = cast(record, c_char_p)
+    index = IC_fieldn(ptr, tag, repeat)
     if index < 0:
         return ''
     answer_size = 32768
     while True:
         answer = create_string_buffer(answer_size)
-        IC_field(record.value, index, to_ansi(subfield), answer, answer_size)
+        IC_field(ptr, index, to_ansi(subfield), answer, answer_size)
         return from_utf(answer.value)
 
 
@@ -485,10 +486,41 @@ def add_field(record: 'Array[c_char]', tag: int, field: str) -> int:
 def write_record(database: str, record: 'Array[c_char]') -> int:
     """
     Сохранение или обновление записи в указанной базе данных.
-    Не работает!!!
     :param database: имя базы данных
     :param record: запись, подлежащая сохранению
     :return: код возврата
     """
     ptr = cast(record, c_char_p)
     return IC_update(to_ansi(database), 0, 1, byref(ptr), len(record))
+
+
+def replace_field(record: 'Array[c_char]', tag: int, repeat: int,
+                  field: str) -> int:
+    """
+    Замена поля в записи.
+    :param record: запись
+    :param tag: метка заменяемого поля
+    :param repeat: повторение поля (отсчет от 1)
+    :param field: новое значение поля
+    :return: код возврата
+    """
+    ptr = cast(record, c_char_p)
+    index = IC_fieldn(ptr, tag, repeat)
+    if index < 0:
+        return ERR_UNKNOWN
+    return IC_fldrep(ptr, index, to_utf(field), len(record))
+
+
+def remove_field(record: 'Array[c_char]', tag: int, repeat: int) -> int:
+    """
+    Удаление поля из записи.
+    :param record: запись
+    :param tag: метка удаляемого поля
+    :param repeat: повторение поля (отсчет от 1)
+    :return: код возврата
+    """
+    ptr = cast(record, c_char_p)
+    index = IC_fieldn(ptr, tag, repeat)
+    if index < 0:
+        return ERR_UNKNOWN
+    return IC_fldrep(ptr, index, b'', len(record))
