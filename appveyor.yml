@@ -33,3 +33,8 @@ build_script:
 after_build:
   - cd c:\projects\python_wrapper
   - python setup.py sdist bdist_wheel
+  - twine upload dist/*
+
+artifacts:
+  - path: dist
+    name: dist
