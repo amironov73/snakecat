@@ -8,6 +8,11 @@ environment:
   PATH: C:\Python36-x64;C:\Python36-x64\Scripts;%PATH%
   PYTHON: C:\Python36-x64\python.exe
   PIP: C:\Python36-x64\Scripts\pip.exe
+  TWINE: C:\Python36-x64\Scripts\twine.exe
+  TWINE_REPOSITORY_URL: https://test.pypi.org/legacy/
+  TWINE_USERNAME: amironov73
+  TWINE_PASSWORD:
+    secure: 1JY9Dr54nOTpD3EAV4mqMQ==
 
 install:
   - python -m pip install --upgrade pip
@@ -15,10 +20,16 @@ install:
   - pip install --upgrade setuptools coverage mypy flake8 twine pylint pygount
 
 before_build:
-  - pygount irbis -f summary -s py
+  - pygount snakecat -f summary -s py
+  - python utils\patch_version.py snakecat\__init__.py %APPVEYOR_BUILD_VERSION%
+  - python utils\patch_version.py setup.py %APPVEYOR_BUILD_VERSION%
 
 build_script:
   - cd c:\projects\python_wrapper
-  - python -m flake8 irbis test.py
-  - python -m mypy irbis test.py
-  - python -m pylint irbis test.py
+  - python -m flake8 snakecat test.py
+  - python -m mypy snakecat test.py
+  - python -m pylint snakecat test.py
+
+after_build:
+  - cd c:\projects\python_wrapper
+  - python setup.py sdist bdist_wheel

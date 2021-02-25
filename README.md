@@ -1,6 +1,4 @@
-# python_wrapper
-
-Python wrapper for irbis64_client.dll
+# Python wrapper for irbis64_client.dll
 
 Supports:
 
@@ -11,7 +9,7 @@ Example:
 
 ```python
 import sys
-from irbis import connect, disconnect, read_record, get_max_mfn, \
+from snakecat import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG
 
 # Set blocking socket mode,

@@ -11,7 +11,7 @@
 """
 
 import sys
-from irbis import connect, disconnect, read_record, hide_window, \
+from snakecat import connect, disconnect, read_record, hide_window, \
     IRBIS_CATALOG, error_to_string, search, fm, format_record
 
 # Устанавливаем блокирующий режим сокета,

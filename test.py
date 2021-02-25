@@ -6,11 +6,11 @@
 
 import sys
 from ctypes import create_string_buffer, cast, c_char_p
-from irbis import connect, disconnect, read_record, get_max_mfn, \
+from snakecat import connect, disconnect, read_record, get_max_mfn, \
     hide_window, IRBIS_CATALOG, error_to_string, from_utf, \
     IC_nfields, IC_fieldn, IC_field, search, search_format, \
     format_record, print_form, read_terms, trim_prefix, read_file, \
-    create_record, add_field, write_record, IC_getmfn
+    create_record, add_field, write_record
 
 # Устанавливаем блокирующий режим сокета,
 # чтобы не появлялось ненужное окно

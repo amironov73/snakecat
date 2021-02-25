@@ -6,14 +6,16 @@
 
 from ctypes import create_string_buffer, c_char_p, cast, byref
 from typing import TYPE_CHECKING
-from irbis.constants import ANSI, UTF, ERR_BUFSIZE, TERM_NOT_EXISTS, \
+from snakecat.constants import ANSI, UTF, ERR_BUFSIZE, TERM_NOT_EXISTS, \
     TERM_FIRST_IN_LIST, TERM_LAST_IN_LIST, DBNPATH2, ERR_UNKNOWN
-from irbis.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
+from snakecat.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_set_blocksocket, IC_search, IC_sformat, IC_fieldn, IC_field, \
     IC_print, IC_adm_getdeletedlist, IC_reset_delim, IC_delim_reset, \
     IC_nexttrm, IC_prevtrm, IC_getresourse, IC_clearresourse, \
     IC_putresourse, IC_runlock, IC_ifupdate, IC_recdummy, IC_fldadd, \
-    IC_update, IC_fldrep
+    IC_update, IC_fldrep, IC_fldempty, IC_recdel, IC_recundel, \
+    IC_recunlock, IC_isactualized, IC_islocked, IC_isdeleted, \
+    IC_isbusy
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List
     from ctypes import Array, c_char
@@ -67,7 +69,7 @@ def error_to_string(ret_code: int) -> str:
 
 def from_ansi(buffer: 'Optional[bytes]') -> str:
     """
-    Превращаем буфер ctypes в обычную строку
+    Превращаем буфер ctypes в обычную строку.
     :param buffer: буфер
     :return: декодированная строка
     """
@@ -78,7 +80,7 @@ def from_ansi(buffer: 'Optional[bytes]') -> str:
 
 def from_utf(buffer: 'Optional[bytes]') -> str:
     """
-    Превращаем буфер ctypes в обычную строку
+    Превращаем буфер ctypes в обычную строку.
     :param buffer: буфер
     :return: декодированная строка
     """
@@ -134,7 +136,7 @@ def hide_window() -> None:
 def connect(host: str, port: str, arm: str, user: str,
             password: str) -> 'Tuple[int, str]':
     """
-    Подключение к серверу.
+    Подключение к серверу -- регистрация клиента на сервере.
     :param host: адрес хоста
     :param port: номер порта
     :param arm: код АРМ
@@ -160,11 +162,21 @@ def connect(host: str, port: str, arm: str, user: str,
 
 def disconnect(user: str) -> int:
     """
-    Отключение от сервера.
+    Отключение от сервера - разрегистрация клиента на сервере,
+    сигнал об окончании работы.
     :return: код возврата
     """
     ret_code = IC_unreg(to_ansi(user))
     return ret_code
+
+
+def is_busy() -> bool:
+    """
+    Определение, не занят ли в данный момент сервер обработкой запроса
+    от данного клиента.
+    :return: `true` если занят
+    """
+    return IC_isbusy() == 1
 
 
 def get_max_mfn(database: str) -> int:
@@ -412,7 +424,7 @@ def read_file(database: str, file_name: str, path: int = DBNPATH2) \
 def clear_cache() -> int:
     """
     Очистка локального кэша форматов, меню и прочих ресурсов,
-    прочитанных с сервера
+    прочитанных с сервера.
     :return: код возврата
     """
     return IC_clearresourse()
@@ -421,7 +433,7 @@ def clear_cache() -> int:
 def write_file(database: str, file_name: str, content: str,
                path: int = DBNPATH2) -> int:
     """
-    Запись текстового файла на серверю
+    Запись текстового файла на сервер.
     :param database: имя базы данных
     :param file_name: имя файла
     :param content: содержимое файла
@@ -524,3 +536,66 @@ def remove_field(record: 'Array[c_char]', tag: int, repeat: int) -> int:
     if index < 0:
         return ERR_UNKNOWN
     return IC_fldrep(ptr, index, b'', len(record))
+
+
+def empty_record(record: 'Array[c_char]') -> int:
+    """
+    Опустошение записи (удаление из нее всех полей).
+    :param record: запись
+    :return: код возврата
+    """
+    return IC_fldempty(cast(record, c_char_p))
+
+
+def delete_record(record: 'Array[c_char]') -> int:
+    """
+    Установить в клиентской копии записи признак логического удаления.
+    :param record: запись
+    :return: код возврата
+    """
+    return IC_recdel(cast(record, c_char_p))
+
+
+def undelete_record(record: 'Array[c_char]') -> int:
+    """
+    Удалить из клиентской копии записи признак логического удаления.
+    :param record: запись
+    :return: код возврата
+    """
+    return IC_recundel(cast(record, c_char_p))
+
+
+def mark_record_unlocked(record: 'Array[c_char]') -> int:
+    """
+    Удалить из клиентской копии записи признак блокировки.
+    :param record: запись
+    :return: код возврата
+    """
+    return IC_recunlock(cast(record, c_char_p))
+
+
+def record_actualized(record: 'Array[c_char]') -> bool:
+    """
+    Определение, установлен ли в локальной копии записи признак актуализации.
+    :param record: запись
+    :return: `true`, если признак установлен
+    """
+    return IC_isactualized(cast(record, c_char_p)) == 1
+
+
+def record_locked(record: 'Array[c_char]') -> bool:
+    """
+    Определение, установлен ли в локальной копии записи признак блокировки.
+    :param record: запись
+    :return: `true`, если признак установлен
+    """
+    return IC_islocked(cast(record, c_char_p)) == 1
+
+
+def record_deleted(record: 'Array[c_char]') -> bool:
+    """
+    Определение, установлен ли в локальной копии записи признак удаления.
+    :param record: запись
+    :return: `true`, если признак установлен
+    """
+    return IC_isdeleted(cast(record, c_char_p)) == 1

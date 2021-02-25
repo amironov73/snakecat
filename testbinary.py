@@ -1,7 +1,7 @@
 # coding: utf-8
 
 """
-Разбираемся, как работает IC_update
+Разбираемся, как работает IC_getbinaryresourse
 """
 
 import sys
@@ -33,19 +33,6 @@ if rc < 0:
     sys.exit(1)
 
 print('Connected\n')
-
-record_buffer = create_string_buffer(BIG_ENOUGH)
-ptr = cast(record_buffer, c_char_p)
-IC_recdummy(ptr, BIG_ENOUGH)
-IC_fldadd(ptr, 700, 0, b'^aOther author', BIG_ENOUGH)
-IC_fldadd(ptr, 200, 0, b'^aTitle^eSubtitle^fResponsibility', BIG_ENOUGH)
-IC_fldadd(ptr, 300, 0, b'Some comment', BIG_ENOUGH)
-IC_fldadd(ptr, 920, 0, b'PAZK', BIG_ENOUGH)
-print(from_utf(record_buffer.value))
-print()
-
-rc = IC_update(DB, 0, 1, byref(ptr), BIG_ENOUGH)
-print('IC_update=', rc)
 
 IC_unreg(USER)
 print('Disconnected')

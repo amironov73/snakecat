@@ -1,8 +1,8 @@
-# Пакет irbis_wrapper
+# Пакет snakecat
 
 ### Введение
 
-Пакет `irbis_wrapper` представляет легкую обертку над `irbis64_client.dll` на основе `ctypes` и предназначен для создания клиентских приложений для системы автоматизации библиотек ИРБИС64 на языке Python.
+Пакет `snakecat` представляет легкую обертку над `irbis64_client.dll` на основе `ctypes` и предназначен для создания клиентских приложений для системы автоматизации библиотек ИРБИС64 на языке Python.
 
 Успешно работает на 32-битных и 64-битных версиях операционных систем Windows, а именно: Windows XP/Vista/7/8/10. Работа на других версиях Windows, а именно: Windows 95/98/ME/NT не гарантируется.
 
@@ -24,7 +24,7 @@
 
 ```python
 import sys
-from irbis import connect, disconnect, read_record, hide_window, \
+from snakecat import connect, disconnect, read_record, hide_window, \
     IRBIS_CATALOG, error_to_string, search, fm, format_record
 
 # Устанавливаем блокирующий режим сокета,
