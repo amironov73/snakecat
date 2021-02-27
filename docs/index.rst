@@ -8,7 +8,7 @@ snakecat - ctypes-обертка для irbis64_client.dll
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Оглавление:
 
    chapter1
    chapter2
@@ -16,7 +16,7 @@ snakecat - ctypes-обертка для irbis64_client.dll
    chapter4
 
 
-Indices and tables
+Справочный аппарат
 ==================
 
 * :ref:`genindex`
