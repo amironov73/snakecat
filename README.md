@@ -1,4 +1,8 @@
-# Python wrapper for irbis64_client.dll
+# Snake Cat
+
+## cpython wrapper for irbis64_client.dll
+
+<img src="assets/snakecat.jpg" alt="Snake Cat" width="100"/>
 
 Supports:
 
@@ -55,3 +59,7 @@ print('That''s All, Folks!')
 ### Build status
 
 [![Build status](https://img.shields.io/appveyor/ci/AlexeyMironov/python-wrapper.svg)](https://ci.appveyor.com/project/AlexeyMironov/python-wrapper/)
+
+### Documentation (in russian)
+
+[![Badge](https://readthedocs.org/projects/snakecat/badge/)](https://pythonirbis.readthedocs.io/) 

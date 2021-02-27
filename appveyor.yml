@@ -18,6 +18,7 @@ install:
   - python -m pip install --upgrade pip
   - pip install --upgrade wheel
   - pip install --upgrade setuptools coverage mypy flake8 twine pylint pygount
+  - pip install --upgrade pygount sphinx sphinx_rtd_theme
 
 before_build:
   - pygount snakecat -f summary -s py
