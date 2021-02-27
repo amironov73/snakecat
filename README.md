@@ -62,4 +62,4 @@ print('That''s All, Folks!')
 
 ### Documentation (in russian)
 
-[![Badge](https://readthedocs.org/projects/snakecat/badge/)](https://pythonirbis.readthedocs.io/) 
+[![Badge](https://readthedocs.org/projects/snakecat/badge/)](https://snakecat.readthedocs.io/) 
