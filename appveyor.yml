@@ -32,6 +32,8 @@ build_script:
   - python -m pylint snakecat test.py
 
 after_build:
+  - cd c:\projects\python_wrapper\docs
+  - make.bat html
   - cd c:\projects\python_wrapper
   - python setup.py sdist bdist_wheel
   - twine upload dist/*
@@ -39,3 +41,5 @@ after_build:
 artifacts:
   - path: dist
     name: dist
+  - path: docs\_build\html
+    name: htmlzip

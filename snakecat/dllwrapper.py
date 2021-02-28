@@ -143,7 +143,7 @@ IC_updategroup = dll.IC_updategroup
 IC_updategroup.restype = c_int
 IC_updategroup.argtypes = [c_char_p, c_int, c_int, c_char_p, c_int]
 
-# Разблокировать запись
+# Разблокировать запись на сервере
 
 IC_runlock = dll.IC_runlock
 IC_runlock.restype = c_int
@@ -492,7 +492,7 @@ IC_adm_setclientslist.argtypes = [c_char_p]
 # Вспомогательные функции
 ######################################################################
 
-# Подтверждение регистрации
+# Подтверждение регистрации - пустая операция.
 
 IC_nooperation = dll.IC_nooperation
 IC_nooperation.restype = c_int
