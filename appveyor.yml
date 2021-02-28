@@ -44,3 +44,5 @@ artifacts:
     name: dist
   - path: docs\_build\html
     name: htmlzip
+  - path: C:\Users\appveyor\AppData\Local\Temp\1
+    name: logs
