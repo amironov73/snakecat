@@ -33,6 +33,7 @@ build_script:
 
 after_build:
   - cd c:\projects\python_wrapper\docs
+  - chcp 1251
   - make.bat html
   - cd c:\projects\python_wrapper
   - python setup.py sdist bdist_wheel
