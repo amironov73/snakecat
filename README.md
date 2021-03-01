@@ -2,7 +2,7 @@
 
 ## cpython wrapper for irbis64_client.dll
 
-<img src="assets/snakecat.jpg" alt="Snake Cat" style="float: left; width: 100px; padding-right: 10px;"/>
+<img src="assets/snakecat.jpg" alt="Snake Cat" width="100" style="float: left; padding-right: 10px;"/>
 
 Supports:
 
