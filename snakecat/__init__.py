@@ -60,7 +60,7 @@ from snakecat.comfort import connect, disconnect, read_record, \
     create_record, add_field, write_record, replace_field, \
     remove_field, empty_record, delete_record, undelete_record, \
     mark_record_unlocked, record_locked, record_deleted, \
-    record_actualized
+    record_actualized, use_web_gateway
 
 __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'ERR_BUFSIZE', 'TERM_NOT_EXISTS', 'TERM_LAST_IN_LIST',
@@ -112,4 +112,4 @@ __all__ = ['NO_ERROR', 'ERR_USER', 'ERR_BUSY', 'ERR_UNKNOWN',
            'create_record', 'add_field', 'write_record', 'replace_field',
            'remove_field', 'empty_record', 'delete_record',
            'undelete_record', 'mark_record_unlocked', 'record_locked',
-           'record_actualized', 'record_deleted']
+           'record_actualized', 'record_deleted', 'use_web_gateway']

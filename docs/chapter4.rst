@@ -2,26 +2,30 @@
 Служебные функции
 =================
 
-**def from_ansi(buffer: Optional\[bytes\]) -> str**
+**from_ansi(buffer: Optional\[bytes\]) -> str**
 
-    Превращаем буфер ctypes в обычную строку.
+    Конвертация буфера ctypes в обычную строку.
 
-**def from_utf(buffer: Optional\[bytes\]) -> str**
+**from_utf(buffer: Optional\[bytes\]) -> str**
 
-    Превращаем буфер ctypes в обычную строку.
+    Конвертация буфера ctypes в обычную строку.
 
-**def to_ansi(text: str) -> bytes**
+**to_ansi(text: Optional\[str\]) -> bytes**
 
-    Конвертируем строку в байты в кодировке ANSI.
+    Конвертация строки в байты в кодировке ANSI.
 
-**def to_utf(text: str) -> bytes**
+**to_utf(text: Optional\[str\]) -> bytes**
 
-    Конвертируем строку в байты в кодировке UTF-8.
+    Конвертация строки в байты в кодировке UTF-8.
 
-**def from_irbis(text: bytes) -> bytes**
+**from_irbis(text: bytes) -> bytes**
 
-    Заменяем псевдоразделители строк на настоящие разделители.
+    Замена псевдоразделителей строк на настоящие разделители.
 
-**def to_irbis(text: bytes) -> bytes**
+**to_irbis(text: bytes) -> bytes**
 
-    Заменяем разделители строк на псевдоразделители.
+    Замена разделителей строк на псевдоразделители.
+
+**def error_to_string(ret_code: int) -> str**
+
+    Получение текстового сообщения об ошибке по ее коду.

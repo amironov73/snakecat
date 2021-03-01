@@ -7,7 +7,7 @@
 
 Пакет ``snakecat`` представляет легкую обертку над ``irbis64_client.dll`` на основе ``ctypes`` и предназначен для создания клиентских приложений для системы автоматизации библиотек ИРБИС64 на языке Python.
 
-Успешно работает на 32-битных и 64-битных версиях операционных систем Windows, а именно: Windows XP/Vista/7/8/10. Работа на других версиях Windows, а именно: Windows 95/98/ME/NT не гарантируется.
+Успешно работает на 32-битных и 64-битных версиях операционных систем Windows, а именно: Windows Vista/7/8/10. Работа на других версиях Windows, а именно: Windows 95/98/ME/NT не гарантируется.
 
 Поддерживается интерпретатор CPython версий, начиная с 3.6. Другие интерпретаторы, например, IronPython, не тестировались и работоспособность пакета под ними не гарантируется.
 
@@ -19,11 +19,9 @@
 
 * Создание и модификация записей, сохранение записей в базе данных на сервере.
 
-* Работа с поисковым словарем: просмотр термов и постингов.
+* Работа с поисковым словарем: просмотр терминов и постингов.
 
 * Администраторские функции: получение списка пользователей, его модификация, передача списка на сервер, создание и удаление баз данных.
-
-* Импорт и экспорт записей в формате ISO 2709 и в обменном формате ИРБИС.
 
 Установка
 =========
@@ -41,6 +39,21 @@
 
 Кроме того, доступны ночные dist-сборки на AppVeyor: https://ci.appveyor.com/project/AlexeyMironov/snakecat/build/artifacts
 
+Режимы работы клиента
+=====================
+
+``irbis64_client.dll`` имеет несколько режимов работы.
+
+Во-первых, клиент может обращаться к серверу по нативному протоколу ИРБИС64 (этот режим используется по умолчанию) либо через Web-шлюз (этот режим включается вызовом ``IC_set_webserver(1)``).
+
+Во-вторых, по умолчанию клиент использует асинхронный режим сокетов, не блокируя прокачку оконных событий. При возникновении задержки ответа сервера отображается окно с бегущим ирбисом
+
+.. image:: _static/running_irbis.png
+    :alt: Бегущий ирбис
+
+Для неинтерактивных скриптов такое поведение нежелательно, поэтому клиент можно переключить в блокирующий режим сокетов c помощью вызова ``IC_set_blocksocket(1)``.
+
+**Заметьте, переключение режима клиента должно выполняться до выполнения подключения к серверу!**
 
 Примеры программ
 ================
@@ -50,50 +63,48 @@
 .. code-block::python
 
     import sys
-    from snakecat import connect, disconnect, read_record, hide_window, \
-        IRBIS_CATALOG, error_to_string, search, fm, format_record
+    import snakecat as irbis
 
     # Устанавливаем блокирующий режим сокета,
     # чтобы не появлялось ненужное окно
-    hide_window()
+    irbis.hide_window()
 
     # данные для подключения к серверу
     HOST = '127.0.0.1'
     PORT = '6666'
-    ARM = IRBIS_CATALOG
+    ARM = 'C'
     USER = 'librarian'
     PASSWORD = 'secret'
     DB = 'IBIS'
 
     # Подключение к серверу
-    rc, ini = connect(HOST, PORT, ARM, USER, PASSWORD)
+    rc, ini = irbis.connect(HOST, PORT, ARM, USER, PASSWORD)
     print('connect=', rc)
     if rc < 0:
-        print(error_to_string(rc))
+        print(irbis.error_to_string(rc))
         print('EXIT')
         sys.exit(1)
 
     # Поиск записей
     print()
-    _, found = search(DB, '"K=ПУШКИН$"')
+    _, found = irbis.search(DB, '"K=ПУШКИН$"')
     print('Найдено записей:', len(found))
 
     # Чтобы не распечатывать все найденные записи, отберем только 10 первых
     for mfn in found[:10]:
 
         # Получаем запись из базы данных
-        _, record = read_record(DB, mfn)
-        title = fm(record, 200, 'a')
+        _, record = irbis.read_record(DB, mfn)
+        title = irbis.fm(record, 200, 'a')
         print('Заглавие:', title)
 
         # Форматирование записи
-        _c, description = format_record(DB, mfn, '@brief')
+        _, description = irbis.format_record(DB, mfn, '@brief')
         print('Биб. описание:', description)
 
         print()  # Добавляем пустую строку
 
     # Отключение от сервера
     print()
-    rc = disconnect(USER)
-    print('IC_unreg=', rc)
-
+    rc = irbis.disconnect(USER)
+    print('disconnect=', rc)

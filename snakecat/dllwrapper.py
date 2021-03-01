@@ -131,31 +131,31 @@ IC_readformat.argtypes = [c_char_p, c_int, c_int, c_char_p,
                           POINTER(c_char_p), c_int, POINTER(c_char_p),
                           c_int]
 
-# Запись/обновление записи в базе данных
+# Сохранение/обновление записи в базе данных
 
 IC_update = dll.IC_update
 IC_update.restype = c_int
 IC_update.argtypes = [c_char_p, c_int, c_int, POINTER(c_char_p), c_int]
 
-# Групповая запись/обновление записей в базе данных
+# Групповое сохранение/обновление записей в базе данных
 
 IC_updategroup = dll.IC_updategroup
 IC_updategroup.restype = c_int
 IC_updategroup.argtypes = [c_char_p, c_int, c_int, c_char_p, c_int]
 
-# Разблокировать запись на сервере
+# Разблокирование записи на сервере
 
 IC_runlock = dll.IC_runlock
 IC_runlock.restype = c_int
 IC_runlock.argtypes = [c_char_p, c_int]
 
-# Актуализировать запись
+# Актуализация записи
 
 IC_ifupdate = dll.IC_ifupdate
 IC_ifupdate.restype = c_int
 IC_ifupdate.argtypes = [c_char_p, c_int]
 
-# Получить максимальный MFN базы данных
+# Получение максимального MFN базы данных
 
 IC_maxmfn = dll.IC_maxmfn
 IC_maxmfn.restype = c_int
@@ -172,103 +172,103 @@ IC_maxmfn.argtypes = [c_char_p]
 # Функции для работы с записью
 ######################################################################
 
-# Определить порядковый номер поля в записи
+# Определение порядкового номера поля в записи
 
 IC_fieldn = dll.IC_fieldn
 IC_fieldn.restype = c_int
 IC_fieldn.argtypes = [c_char_p, c_int, c_int]
 
-# Прочитать заданное поле/подполе
+# Чтение заданного поля/подполя
 
 IC_field = dll.IC_field
 IC_field.restype = c_int
 IC_field.argtypes = [c_char_p, c_int, c_char, c_char_p, c_int]
 
-# Добавить поле в запись
+# Добавление поля в запись
 
 IC_fldadd = dll.IC_fldadd
 IC_fldadd.restype = c_int
 IC_fldadd.argtypes = [c_char_p, c_int, c_int, c_char_p, c_int]
 
-# Заменить поле
+# Замена поля
 
 IC_fldrep = dll.IC_fldrep
 IC_fldrep.restype = c_int
 IC_fldrep.argtypes = [c_char_p, c_int, c_char_p, c_int]
 
-# Определить количеств полей в записи
+# Определение количества полей в записи
 
 IC_nfields = dll.IC_nfields
 IC_nfields.restype = c_int
 IC_nfields.argtypes = [c_char_p]
 
-# Определить количество повторений поля с заданной меткой
+# Определение количества повторений поля с заданной меткой
 
 IC_nocc = dll.IC_nocc
 IC_nocc.restype = c_int
 IC_nocc.argtypes = [c_char_p, c_int]
 
-# Определить метку поля с заданным порядковым номером
+# Определение метки поля с заданным порядковым номером
 
 IC_fldtag = dll.IC_fldtag
 IC_fldtag.restype = c_int
 IC_fldtag.argtypes = [c_char_p, c_int]
 
-# Опустошить запись
+# Опустошение записи
 
 IC_fldempty = dll.IC_fldempty
 IC_fldempty.restype = c_int
 IC_fldempty.argtypes = [c_char_p]
 
-# Поменять MFN записи
+# Изменение MFN записи
 
 IC_changemfn = dll.IC_changemfn
 IC_changemfn.restype = c_int
 IC_changemfn.argtypes = [c_char_p, c_int]
 
-# Установить признак логически удаленной записи
+# Установка признака логически удаленной записи (локально)
 
 IC_recdel = dll.IC_recdel
 IC_recdel.restype = c_int
 IC_recdel.argtypes = [c_char_p]
 
-# Снять признак логически удаленной записи
+# Снятие признака логически удаленной записи (локально)
 
 IC_recundel = dll.IC_recundel
 IC_recundel.restype = c_int
 IC_recundel.argtypes = [c_char_p]
 
-# Снять признак заблокированности
+# Снятие признака блокировки записи (локально)
 
 IC_recunlock = dll.IC_recunlock
 IC_recunlock.restype = c_int
 IC_recunlock.argtypes = [c_char_p]
 
-# Прочитать MFN записи
+# Чтение MFN записи
 
 IC_getmfn = dll.IC_getmfn
 IC_getmfn.restype = c_int
 IC_getmfn.argtypes = [c_char_p]
 
-# Создать пустую запись
+# Создание пустую запись (локально)
 
 IC_recdummy = dll.IC_recdummy
 IC_recdummy.restype = c_int
 IC_recdummy.argtypes = [c_char_p, c_int]
 
-# Прочитать в статусе записи признак актуализированности
+# Чтение в статусе записи признака актуализации
 
 IC_isactualized = dll.IC_isActualized
 IC_isactualized.restype = c_int
 IC_isactualized.argtypes = [c_char_p]
 
-# прочитать в статусе записи признак блокировки
+# Чтение в статусе записи признака блокировки
 
 IC_islocked = dll.IC_isLocked
 IC_islocked.restype = c_int
 IC_islocked.argtypes = [c_char_p]
 
-# прочитать в статусе записи признак логического удаления
+# Чтение в статусе записи признака логического удаления
 
 IC_isdeleted = dll.IC_isDeleted
 IC_isdeleted.restype = c_int
@@ -278,48 +278,48 @@ IC_isdeleted.argtypes = [c_char_p]
 # Функции для работы со словарем базы данных
 ######################################################################
 
-# Получить список терминов словаря, начиная с заданного
+# Получение списка терминов словаря, начиная с заданного
 
 IC_nexttrm = dll.IC_nexttrm
 IC_nexttrm.restype = c_int
 IC_nexttrm.argtypes = [c_char_p, c_char_p, c_int, c_char_p, c_int]
 
-# Получить список терминов словаря, начиная с заданного,
-# и расформатировать записи, соответствующие первой ссылке каждого термина
+# Получение списка терминов словаря, начиная с заданного,
+# и расформатирование записи, соответствующей первой ссылке каждого термина
 
 IC_nexttrmgroup = dll.IC_nexttrmgroup
 IC_nexttrmgroup.restype = c_int
 IC_nexttrmgroup.argtypes = [c_char_p, c_char_p, c_int, c_char_p,
                             c_char_p, c_int]
 
-# Получить список терминов словаря, начиная с заданного, в обратном порядке
+# Получение списка терминов словаря, начиная с заданного, в обратном порядке
 
 IC_prevtrm = dll.IC_prevtrm
 IC_prevtrm.restype = c_int
 IC_prevtrm.argtypes = [c_char_p, c_char_p, c_int, c_char_p, c_int]
 
-# Получить список терминов словаря, начиная с заданного, в обратном порядке
-# и расформатировать записи, соответствующие первой ссылке каждого термина
+# Получение списка терминов словаря, начиная с заданного, в обратном порядке
+# и расформатирование записи, соответствующей первой ссылке каждого термина
 
 IC_prevtrmgroup = dll.IC_prevtrmgroup
 IC_prevtrmgroup.restype = c_int
 IC_prevtrmgroup.argtypes = [c_char_p, c_char_p, c_int, c_char_p,
                             c_char_p, c_int]
 
-# Получить список ссылок для заданного термина
+# Получение списка ссылок для заданного термина
 
 IC_posting = dll.IC_posting
 IC_posting.restype = c_int
 IC_posting.argtypes = [c_char_p, c_char_p, c_int, c_int, c_char_p, c_int]
 
-# Получить список первых ссылок для списка заданных терминов
+# Получение списка первых ссылок для списка заданных терминов
 
 IC_postinggroup = dll.IC_postinggroup
 IC_postinggroup.restype = c_int
 IC_postinggroup.argtypes = [c_char_p, c_char_p, c_char_p, c_int]
 
-# Получить список ссылок для заданного термина и расформатировать
-# записи им соответствующие
+# Получение списка ссылок для заданного термина и расформатирование
+# записей им соответствующих
 
 IC_postingformat = dll.IC_postingformat
 IC_postingformat.restype = c_int
@@ -396,93 +396,93 @@ IC_gbl.argtypes = [c_char_p, c_int, c_char_p, c_char_p, c_int, c_int,
 # Функции администратора
 ######################################################################
 
-# Перезапустить сервер ИРБИС64
+# Перезапуск сервера ИРБИС64
 
 IC_adm_restartserver = dll.IC_adm_restartserver
 IC_adm_restartserver.restype = c_int
 IC_adm_restartserver.argtypes = []
 
-# Получить список удаленных документов
+# Получение списка удаленных документов
 
 IC_adm_getdeletedlist = dll.IC_adm_getDeletedList
 IC_adm_getdeletedlist.restype = c_int
 IC_adm_getdeletedlist.argtypes = [c_char_p, c_char_p, c_int]
 
-# Получить общие сведения о базе данных: списки
-# удаленных/заблокированных/неактуализированных, максимальный MFN
-# и признак монопольной блокировки
+# Получение общих сведений о базе данных: списки
+# удаленных/заблокированных/неактуализированных записей,
+# максимальный MFN и признак монопольной блокировки базы
 
 IC_adm_getalldeletedlists = dll.IC_adm_getallDeletedLists
 IC_adm_getalldeletedlists.restype = c_int
 IC_adm_getalldeletedlists.argtypes = [c_char_p, c_char_p, c_int]
 
-# Опустошить базу данных
+# Опустошение базы данных
 
 IC_adm_dbempty = dll.IC_adm_dbempty
 IC_adm_dbempty.restype = c_int
 IC_adm_dbempty.argtypes = [c_char_p]
 
-# Удалить базу данных
+# Удаление базы данных
 
 IC_adm_dbdelete = dll.IC_adm_dbdelete
 IC_adm_dbdelete.restype = c_int
 IC_adm_dbdelete.argtypes = [c_char_p]
 
-# Создать новую базу данных электронного каталога
+# Создание новой базы данных электронного каталога
 
 IC_adm_newdb = dll.IC_adm_newdb
 IC_adm_newdb.restype = c_int
 IC_adm_newdb.argtypes = [c_char_p, c_char_p, c_int]
 
-# Снять монопольную блокировку базы данных
+# Снятие монопольной блокировки базы данных
 
 IC_adm_dbunlock = dll.IC_adm_DBunlock
 IC_adm_dbunlock.restype = c_int
 IC_adm_dbunlock.argtypes = [c_char_p]
 
-# Снять блокировку заданных записей
+# Снятие блокировки заданных записей
 
 IC_adm_dbunlockmfn = dll.IC_adm_DBunlockMFN
 IC_adm_dbunlockmfn.restype = c_int
 IC_adm_dbunlockmfn.argtypes = [c_char_p, c_char_p]
 
-# Создать словарь базы данных заново
+# Создание словаря базы данных заново
 
 IC_adm_dbstartcreatedictionry = dll.IC_adm_DBStartCreateDictionry
 IC_adm_dbstartcreatedictionry.restype = c_int
 IC_adm_dbstartcreatedictionry.argtypes = [c_char_p]
 
-# Реорганизовать словарь базы данных
+# Реорганизация словаря базы данных
 
 IC_adm_dbstartreorgdictionry = dll.IC_adm_DBStartReorgDictionry
 IC_adm_dbstartreorgdictionry.restype = c_int
 IC_adm_dbstartreorgdictionry.argtypes = [c_char_p]
 
-# Реорганизовать файл документов базы данных
+# Реорганизация файла документов базы данных
 
 IC_adm_dbstartreorgmaster = dll.IC_adm_DBStartReorgMaster
 IC_adm_dbstartreorgmaster.restype = c_int
 IC_adm_dbstartreorgmaster.argtypes = [c_char_p]
 
-# Получить список зарегистрированных (текущих) клиентов
+# Получение списка зарегистрированных (текущих) клиентов
 
 IC_adm_getclientlist = dll.IC_adm_getClientlist
 IC_adm_getclientlist.restype = c_int
 IC_adm_getclientlist.argtypes = [c_char_p, c_int]
 
-# Получить список клиентов для доступа к серверу
+# Получение списка клиентов для доступа к серверу
 
 IC_adm_getclientslist = dll.IC_adm_getClientslist
 IC_adm_getclientslist.restype = c_int
 IC_adm_getclientslist.argtypes = [c_char_p, c_int]
 
-# Получить список запущенных процессов на сервере
+# Получение списка запущенных процессов на сервере
 
 IC_adm_getprocesslist = dll.IC_adm_getProcessList
 IC_adm_getprocesslist.restype = c_int
 IC_adm_getprocesslist.argtypes = [c_char_p, c_int]
 
-# Обновить список клиентов для доступа к серверу
+# Обновление списка клиентов для доступа к серверу
 
 IC_adm_setclientslist = dll.IC_adm_SetClientslist
 IC_adm_setclientslist.restype = c_int

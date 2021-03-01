@@ -15,7 +15,7 @@ from snakecat.dllwrapper import IC_reg, IC_unreg, IC_read, IC_maxmfn, \
     IC_putresourse, IC_runlock, IC_ifupdate, IC_recdummy, IC_fldadd, \
     IC_update, IC_fldrep, IC_fldempty, IC_recdel, IC_recundel, \
     IC_recunlock, IC_isactualized, IC_islocked, IC_isdeleted, \
-    IC_isbusy
+    IC_isbusy, IC_set_webserver, IC_set_webcgi
 if TYPE_CHECKING:
     from typing import Optional, Tuple, List
     from ctypes import Array, c_char
@@ -89,21 +89,25 @@ def from_utf(buffer: 'Optional[bytes]') -> str:
     return ''
 
 
-def to_ansi(text: str) -> bytes:
+def to_ansi(text: 'Optional[str]') -> bytes:
     """
     Конвертируем строку в байты в кодировке ANSI.
     :param text: текст для конверсии
     :return: ANSI-байты
     """
+    if not text:
+        return b''
     return text.encode(ANSI)
 
 
-def to_utf(text: str) -> bytes:
+def to_utf(text: 'Optional[str]') -> bytes:
     """
     Конвертируем строку в байты в кодировке UTF-8.
     :param text: текст для конверсии
     :return: UTF-байты
     """
+    if not text:
+        return b''
     return text.encode(UTF)
 
 
@@ -131,6 +135,20 @@ def hide_window() -> None:
     :return:
     """
     IC_set_blocksocket(1)
+
+
+def use_web_gateway(cgi: 'Optional[str]' = None) -> int:
+    """
+    Установка режима работы через Web-шлюз.
+    :param cgi: путь к шлюзу (по умолчанию ``/cgi-bin/wwwirbis.exe``)
+    :return: код возврата
+    """
+    ret_code = IC_set_webserver(1)
+    if ret_code < 0:
+        return ret_code
+    if cgi:
+        ret_code = IC_set_webcgi(to_ansi(cgi))
+    return ret_code
 
 
 def connect(host: str, port: str, arm: str, user: str,
@@ -396,11 +414,12 @@ def trim_prefix(terms: 'List[Tuple[str, int]]', prefix: str) -> \
     return result
 
 
-def read_file(database: str, file_name: str, path: int = DBNPATH2) \
-        -> 'Tuple[int, str]':
+def read_file(database: 'Optional[str]', file_name: str,
+              path: int = DBNPATH2) -> 'Tuple[int, str]':
     """
     Чтение текстового файла с сервера.
-    :param database: имя базы данных
+    :param database: имя базы данных (не используется для кодов
+    SYSPATH и DATAPATH)
     :param file_name: имя файла
     :param path: код пути
     :return: код возврата и содержимое файла (пустая строка,
@@ -430,7 +449,7 @@ def clear_cache() -> int:
     return IC_clearresourse()
 
 
-def write_file(database: str, file_name: str, content: str,
+def write_file(database: 'Optional[str]', file_name: str, content: str,
                path: int = DBNPATH2) -> int:
     """
     Запись текстового файла на сервер.
