@@ -2,7 +2,7 @@
 
 ## cpython wrapper for irbis64_client.dll
 
-<img src="assets/snakecat.jpg" alt="Snake Cat" width="100"/>
+<img src="assets/snakecat.jpg" alt="Snake Cat" style="float: left; width: 100px; padding-right: 10px;"/>
 
 Supports:
 
@@ -13,43 +13,43 @@ Example:
 
 ```python
 import sys
-from snakecat import connect, disconnect, read_record, get_max_mfn, \
-    hide_window, IRBIS_CATALOG
+import snakecat as irbis
 
 # Set blocking socket mode,
 # get rid of obsessive window
-hide_window()
+irbis.hide_window()
 
 # Data for the connection
 HOST = '127.0.0.1'
 PORT = '6666'
-ARM = IRBIS_CATALOG
+ARM = 'C'
 USER = 'librarian'
 PASSWORD = 'secret'
 DB = 'IBIS'
 
 # Connect to the server
-rc, ini = connect(HOST, PORT, ARM, USER, PASSWORD)
+rc, ini = irbis.connect(HOST, PORT, ARM, USER, PASSWORD)
 print('connect=', rc)
 if rc < 0:
+    print(irbis.error_to_string(rc))
     print('EXIT')
     sys.exit(1)
 else:
     print('connect=', ini)
 
 # Read one record from the server
-rc, record = read_record(DB, 1)
+rc, record = irbis.read_record(DB, 1)
 print('read_record=', rc)
 if rc >= 0:
     print('IC_read=', record)
 
 # Get the maximal MFN
-rc = get_max_mfn(DB)
+rc = irbis.get_max_mfn(DB)
 print('get_max_mfn=', rc)
 
 # Disconnect from the server
 print()
-rc = disconnect(USER)
+rc = irbis.disconnect(USER)
 print('disconnect=', rc)
 
 print()
